@@ -29,7 +29,7 @@ GLuint VBO, VAO, EBO;
 GLuint skyboxVBO, skyboxVAO;
 
 //Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 13.0f));
+Camera camera(glm::vec3(0.0f, 2.0f, 10.0f));
 double	lastX = 0.0f,
 		lastY = 0.0f;
 bool firstMouse = true;
@@ -54,10 +54,10 @@ unsigned int generateTextures(char*, bool);
 float	movX = 0.0f,
 		movY = 0.0f,
 		movZ = -5.0f,
-		rotX = 0.0f;
+		rotY = 0.0f;
 
 //Texture
-unsigned int	t_smile;
+unsigned int	t_piso_m, t_piso_b;
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulación del dibujo 
@@ -192,7 +192,8 @@ void getResolution()
 
 void LoadTextures()
 {
-
+	t_piso_m = generateTextures("Texturas/piso_m.jpg", 0);
+	t_piso_b = generateTextures("Texturas/piso_b.png", 0);
 	
 }
 
@@ -200,6 +201,8 @@ void myData()
 {	
 	float vertices[] = {
 		// positions          // normals           // texture coords
+
+		//Cubo
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
 		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
@@ -229,6 +232,13 @@ void myData()
 		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
 		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
 		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+
+
+		//Piso
+		-0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,  10.0f,  0.0f,
+		 0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,  10.0f,  10.0f,
+		-0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  10.0f,
 
 	};
 	unsigned int indices[] = {
@@ -404,75 +414,42 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 300.0f);
 	view = camera.GetViewMatrix();
 
+	//Scenario Rotation
+	view = glm::rotate(view,
+		glm::radians(rotY),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
 	// pass them to the shaders
 	shader.setMat4("model", model);
 	shader.setMat4("view", view);
 	// note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 	shader.setMat4("projection", projection);
 
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -1.0f, -1.0f));
-	model = glm::scale(model, glm::vec3(0.032f, 0.01f, 0.024f));
-	shader.setMat4("model", model);
-	piso.Draw(shader);
 
-	//Personaje
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0, 1, 0));
-	model = glm::translate(model, glm::vec3(posX, posY, posZ));
-	tmp = model = glm::rotate(model, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0));
+	//Piso
+	model = glm::scale(glm::mat4(1.0f), glm::vec3(80.0f, 1.0f, 60.0f));
 	shader.setMat4("model", model);
-	torso.Draw(shader);
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t_piso_m);
+	glDrawArrays(GL_QUADS, 24, 4);
+	glBindVertexArray(0);
 
-	//Pierna Der
-	model = glm::translate(tmp, glm::vec3(-0.5f, 0.0f, -0.1f));
-	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
-	model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+	//Sector B
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(19.0f, 0.01f, -23.0f));
+	model = glm::scale(model, glm::vec3(42.0f, 1.0f, 14.0f));
 	shader.setMat4("model", model);
-	piernaDer.Draw(shader);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, t_piso_b);
+	glDrawArrays(GL_QUADS, 24, 4);
+	glBindVertexArray(0);
 
-	//Pie Der
-	model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-	shader.setMat4("model", model);
-	botaDer.Draw(shader);
-
-	//Pierna Izq
-	model = glm::translate(tmp, glm::vec3(0.5f, 0.0f, -0.1f));
-	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
-	shader.setMat4("model", model);
-	piernaIzq.Draw(shader);
-
-	//Pie Iz
-	model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-	shader.setMat4("model", model);
-	botaDer.Draw(shader);	//Izq trase
-
-	//Brazo derecho
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(-0.75f, 2.5f, 0));
-	model = glm::rotate(model, glm::radians(-movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
-	shader.setMat4("model", model);
-	brazoDer.Draw(shader);
-
-	//Brazo izquierdo
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(0.75f, 2.5f, 0));
-	model = glm::rotate(model, glm::radians(movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
-	shader.setMat4("model", model);
-	brazoIzq.Draw(shader);
-
-	//Cabeza
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rotCabeza), glm::vec3(0.0f, 1.0f, 0.0));
-	model = glm::translate(model, glm::vec3(0.0f, 2.5f, 0));
-	shader.setMat4("model", model);
-	cabeza.Draw(shader);
-
+	
 
 	// Draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
 	skyboxShader.use();
-	view = glm::mat4(glm::mat3(camera.GetViewMatrix()));	// Remove any translation component of the view matrix
+	view = glm::mat4(glm::mat3(view));	// Remove any translation component of the view matrix
 
 	skyboxShader.setMat4("view", view);
 	skyboxShader.setMat4("projection", projection);
@@ -527,6 +504,7 @@ int main()
 	//Mis funciones
 	//Datos a utilizar
 	LoadTextures();
+	myData();
 	myData2();
 	glEnable(GL_DEPTH_TEST);
 	
@@ -628,6 +606,10 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		camera.ProcessKeyboard(UPWARD, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWNWARD, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		rotY-=0.5;
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		rotY += 0.5;
 	//To Configure Model
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
 		posZ++;

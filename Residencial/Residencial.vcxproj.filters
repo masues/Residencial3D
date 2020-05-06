@@ -33,4 +33,66 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\modelLoading.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\modelLoading.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_lamp.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_lamp.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_light.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_light.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_light_Gouraud.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_light_Gouraud.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_Lights.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_Lights.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_projection.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_projection.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_texture.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_texture.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_texture_color.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\shader_texture_color.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\SkyBox.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\SkyBox.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
