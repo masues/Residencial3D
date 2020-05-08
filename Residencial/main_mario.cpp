@@ -375,7 +375,8 @@ void animate(void)
 
 void display(	Shader shader, Shader skyboxShader, GLuint skybox, 
 				Model botaDer, Model piernaDer, Model piernaIzq, Model torso,
-				Model brazoDer, Model brazoIzq, Model cabeza, Model piso, Model edificio5)
+				Model brazoDer, Model brazoIzq, Model cabeza, Model piso, Model edificio5,
+				Model edificio6)
 {
 	shader.use();
 
@@ -411,7 +412,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
 
 	//Use "projection" to include Camera
-	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 300.0f);
+	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50.0f);
 	view = camera.GetViewMatrix();
 
 	//Scenario Rotation
@@ -446,12 +447,28 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	glBindVertexArray(0);
 
 	//Edificio 5
-	model = glm::translate(tmp, glm::vec3(-9.5f, 0.0f, 0.0f));
+	model = glm::translate(tmp, glm::vec3(-9.5f, 0.0f, -1.0f));
 	model = glm::rotate(model,glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
 	shader.setMat4("model", model);
 	edificio5.Draw(shader);
 	
+	//Sector D
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
+	tmp = model;
+	model = glm::scale(model, glm::vec3(20.0f, 1.0f, 30.0f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, t_piso_b);
+	glDrawArrays(GL_QUADS, 24, 4);
+	glBindVertexArray(0);
+
+	//Edificio 6
+	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, -9.0f));
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.001112f, 0.001112f, 0.001112f));
+	shader.setMat4("model", model);
+	edificio6.Draw(shader);
 
 	// Draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
@@ -529,6 +546,7 @@ int main()
 	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
 	Model pisoModel = ((char *)"Models/piso/piso.obj");
 	Model edificio5 = ((char *)"Models/Edificio5/edificio5.obj");
+	Model edificio6 = ((char *)"Models/Edificio6/edificio6.obj");
 
 	//Inicialización de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
@@ -579,7 +597,7 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture, 
 				botaDer, piernaDer,
 				piernaIzq, torso, brazoDer, brazoIzq,
-				cabeza, pisoModel, edificio5);
+				cabeza, pisoModel, edificio5, edificio6);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
