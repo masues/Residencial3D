@@ -375,7 +375,7 @@ void animate(void)
 
 void display(	Shader shader, Shader skyboxShader, GLuint skybox, 
 				Model botaDer, Model piernaDer, Model piernaIzq, Model torso,
-				Model brazoDer, Model brazoIzq, Model cabeza, Model piso)
+				Model brazoDer, Model brazoIzq, Model cabeza, Model piso, Model edificio5)
 {
 	shader.use();
 
@@ -437,6 +437,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 
 	//Sector B
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(19.0f, 0.01f, -23.0f));
+	tmp = model;
 	model = glm::scale(model, glm::vec3(42.0f, 1.0f, 14.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -444,6 +445,12 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	glDrawArrays(GL_QUADS, 24, 4);
 	glBindVertexArray(0);
 
+	//Edificio 5
+	model = glm::translate(tmp, glm::vec3(-9.5f, 0.0f, 0.0f));
+	model = glm::rotate(model,glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
+	shader.setMat4("model", model);
+	edificio5.Draw(shader);
 	
 
 	// Draw skybox as last
@@ -521,6 +528,7 @@ int main()
 	Model brazoIzq = ((char *)"Models/Personaje/brazoizq.obj");
 	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
 	Model pisoModel = ((char *)"Models/piso/piso.obj");
+	Model edificio5 = ((char *)"Models/Edificio5/edificio5.obj");
 
 	//Inicialización de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
@@ -571,7 +579,7 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture, 
 				botaDer, piernaDer,
 				piernaIzq, torso, brazoDer, brazoIzq,
-				cabeza, pisoModel);
+				cabeza, pisoModel, edificio5);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -607,9 +615,9 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
 		camera.ProcessKeyboard(DOWNWARD, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		rotY-=0.5;
+		rotY-=15;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		rotY += 0.5;
+		rotY += 15;
 	//To Configure Model
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
 		posZ++;
