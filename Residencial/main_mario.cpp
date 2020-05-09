@@ -1,7 +1,7 @@
 /*---------------------------------------------------------*/
 /* ------------- Proyecto Final: Residencial --------------*/
 /*-----------------    2020-2   ---------------------------*/
-/*-------- Alumno: Suárez Espinoza Mario Alberto ----------*/
+/*-------- Alumno: Suï¿½rez Espinoza Mario Alberto ----------*/
 //#define STB_IMAGE_IMPLEMENTATION
 #include <glew.h>
 #include <glfw3.h>
@@ -29,7 +29,7 @@ GLuint VBO, VAO, EBO;
 GLuint skyboxVBO, skyboxVAO;
 
 //Camera
-Camera camera(glm::vec3(0.0f, 2.0f, 10.0f));
+Camera camera(glm::vec3(35.0f, 2.0f, 10.0f));
 double	lastX = 0.0f,
 		lastY = 0.0f;
 bool firstMouse = true;
@@ -57,10 +57,10 @@ float	movX = 0.0f,
 		rotY = 0.0f;
 
 //Texture
-unsigned int	t_piso_m, t_piso_b;
+unsigned int	t_piso_m, t_piso_b, t_grass_m;
 
 //Keyframes
-float	posX = 0.0f, //variables de manipulación del dibujo 
+float	posX = 0.0f, //variables de manipulaciï¿½n del dibujo 
 		posY = 0.0f, 
 		posZ = 0.0f, 
 		rotRodIzq = 0.0f, //Pie
@@ -68,7 +68,7 @@ float	posX = 0.0f, //variables de manipulación del dibujo
 		movBrazo = 0.0f,
 		rotCabeza = 0.0f;
 
-float	incX = 0.0f, //Variables para el cálculo de incrementos
+float	incX = 0.0f, //Variables para el cï¿½lculo de incrementos
 		incY = 0.0f,
 		incZ = 0.0f,
 		rotInc = 0.0f,
@@ -77,7 +77,7 @@ float	incX = 0.0f, //Variables para el cálculo de incrementos
 		rotCabezaInc = 0.0f;
 
 #define MAX_FRAMES 9
-int i_max_steps = 190; //Cantidad máxima de frames intermedios
+int i_max_steps = 190; //Cantidad mï¿½xima de frames intermedios
 int i_curr_steps = 0;
 typedef struct _frame
 {
@@ -193,7 +193,8 @@ void getResolution()
 void LoadTextures()
 {
 	t_piso_m = generateTextures("Texturas/piso_m.jpg", 0);
-	t_piso_b = generateTextures("Texturas/piso_b.png", 0);
+	t_piso_b = generateTextures("Texturas/concreto_m.jpg", 0);
+	t_grass_m = generateTextures("Texturas/grass_m.jpg", 0);
 	
 }
 
@@ -373,10 +374,9 @@ void animate(void)
 	
 }
 
-void display(	Shader shader, Shader skyboxShader, GLuint skybox, 
-				Model botaDer, Model piernaDer, Model piernaIzq, Model torso,
-				Model brazoDer, Model brazoIzq, Model cabeza, Model piso, Model edificio5,
-				Model edificio6, Model edificio7)
+void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
+				Model edificio6, Model edificio7, Model tree1, Model tree2,
+				Model tree3)
 {
 	shader.use();
 
@@ -442,6 +442,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	model = glm::scale(model, glm::vec3(42.0f, 1.0f, 14.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_piso_b);
 	glDrawArrays(GL_QUADS, 24, 4);
 	glBindVertexArray(0);
@@ -459,6 +460,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	model = glm::scale(model, glm::vec3(20.0f, 1.0f, 30.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_piso_b);
 	glDrawArrays(GL_QUADS, 24, 4);
 	glBindVertexArray(0);
@@ -473,9 +475,44 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	//Edificio 7
 	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, 9.0f));
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
 	edificio7.Draw(shader);
+
+	//Pasto sector D
+	model = glm::translate(tmp, glm::vec3(7.0f, 0.01f, 0.0f));
+	tmp = model;
+	model = glm::scale(model, glm::vec3(4.0f, 1.0f, 25.0f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t_grass_m);
+	glDrawArrays(GL_QUADS, 24, 4);
+	glBindVertexArray(0);
+
+	//ï¿½rbol 1
+	model = glm::scale(tmp, glm::vec3(0.0131f, 0.0131f, 0.0131f));
+	shader.setMat4("model", model);
+	tree1.Draw(shader);
+
+	//ï¿½rbol 2
+	for (int i = 1; i <= 2; i++) {
+		model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
+			5.0f * (float) pow(-1.0f,(float)i)));
+		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
+		shader.setMat4("model", model);
+		tree2.Draw(shader);
+	}
+
+	//ï¿½rbol 3
+	for (int i = 1; i <= 2; i++) {
+		model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
+			10.0f * (float)pow(-1.0f, (float)i)));
+		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
+		shader.setMat4("model", model);
+		tree3.Draw(shader);
+	}
+	
 
 	// Draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
@@ -544,6 +581,7 @@ int main()
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
 
 	// Load models
+	/*
 	Model botaDer = ((char *)"Models/Personaje/bota.obj");
 	Model piernaDer = ((char *)"Models/Personaje/piernader.obj");
 	Model piernaIzq = ((char *)"Models/Personaje/piernader.obj");
@@ -551,12 +589,15 @@ int main()
 	Model brazoDer = ((char *)"Models/Personaje/brazoder.obj");
 	Model brazoIzq = ((char *)"Models/Personaje/brazoizq.obj");
 	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
-	Model pisoModel = ((char *)"Models/piso/piso.obj");
+	Model pisoModel = ((char *)"Models/piso/piso.obj");*/
 	Model edificio5 = ((char *)"Models/Edificio5/edificio5.obj");
 	Model edificio6 = ((char *)"Models/Edificio6/edificio6.obj");
 	Model edificio7 = ((char *)"Models/Edificio7/edificio7.obj");
+	Model tree1 = ((char *)"Models/Trees/Tree1/tree1.obj");
+	Model tree2 = ((char *)"Models/Trees/Tree2/tree2.obj");
+	Model tree3 = ((char *)"Models/Trees/Tree3/tree3.obj");
 
-	//Inicialización de KeyFrames
+	//Inicializaciï¿½n de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
 	{
 		KeyFrame[i].posX = 0;
@@ -603,9 +644,8 @@ int main()
 
 		//display(modelShader, ourModel, llantasModel);
 		display(modelShader, SkyBoxshader, cubemapTexture, 
-				botaDer, piernaDer,
-				piernaIzq, torso, brazoDer, brazoIzq,
-				cabeza, pisoModel, edificio5, edificio6, edificio7);
+				edificio5, edificio6, edificio7,
+				tree1, tree2, tree3);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
