@@ -376,7 +376,7 @@ void animate(void)
 void display(	Shader shader, Shader skyboxShader, GLuint skybox, 
 				Model botaDer, Model piernaDer, Model piernaIzq, Model torso,
 				Model brazoDer, Model brazoIzq, Model cabeza, Model piso, Model edificio5,
-				Model edificio6)
+				Model edificio6, Model edificio7)
 {
 	shader.use();
 
@@ -470,6 +470,13 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	shader.setMat4("model", model);
 	edificio6.Draw(shader);
 
+	//Edificio 7
+	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, 9.0f));
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+	shader.setMat4("model", model);
+	edificio7.Draw(shader);
+
 	// Draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
 	skyboxShader.use();
@@ -547,6 +554,7 @@ int main()
 	Model pisoModel = ((char *)"Models/piso/piso.obj");
 	Model edificio5 = ((char *)"Models/Edificio5/edificio5.obj");
 	Model edificio6 = ((char *)"Models/Edificio6/edificio6.obj");
+	Model edificio7 = ((char *)"Models/Edificio7/edificio7.obj");
 
 	//Inicialización de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
@@ -597,7 +605,7 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture, 
 				botaDer, piernaDer,
 				piernaIzq, torso, brazoDer, brazoIzq,
-				cabeza, pisoModel, edificio5, edificio6);
+				cabeza, pisoModel, edificio5, edificio6, edificio7);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
