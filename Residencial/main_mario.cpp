@@ -29,7 +29,7 @@ GLuint VBO, VAO, EBO;
 GLuint skyboxVBO, skyboxVAO;
 
 //Camera
-Camera camera(glm::vec3(35.0f, 2.0f, 10.0f));
+Camera camera(glm::vec3(20.0f, 2.0f, -10.0f));
 double	lastX = 0.0f,
 		lastY = 0.0f;
 bool firstMouse = true;
@@ -40,7 +40,7 @@ double	deltaTime = 0.0f,
 
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
-glm::vec3 lightDirection(0.0f, -1.0f, -1.0f);
+glm::vec3 lightDirection(-0.2f, -1.0f, -1.0f);
 
 void myData(void);
 void myData2(void);
@@ -57,7 +57,23 @@ float	movX = 0.0f,
 		rotY = 0.0f;
 
 //Texture
-unsigned int	t_piso_m, t_piso_b, t_grass_m;
+unsigned int t_piso_m, t_piso_b, t_grass_m,
+		t_c1_frontal,
+		t_c1_inferior,
+		t_c1_lateral,
+		t_c2_lateral,
+		t_c4_frontal,
+		t_c4_lateral_izq,
+		t_c5_lateral,
+		t_c5_frontal,
+		t_c6_superior,
+		t_c6_lateral,
+		t_c6_frontal,
+		t_t1_frontal,
+		t_t1_lateral,
+		t_t1_trasera,
+		t_t3_frontal,
+		t_t3_trasera;
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
@@ -195,7 +211,23 @@ void LoadTextures()
 	t_piso_m = generateTextures("Texturas/piso_m.jpg", 0);
 	t_piso_b = generateTextures("Texturas/concreto_m.jpg", 0);
 	t_grass_m = generateTextures("Texturas/grass_m.jpg", 0);
-	
+	//Casa Rick
+	t_c1_frontal = generateTextures("Texturas/CasaRick/c1_frontal.jpg", 0);
+	t_c1_inferior = generateTextures("Texturas/CasaRick/c1_inferior.jpg", 0);
+	t_c1_lateral = generateTextures("Texturas/CasaRick/c1_lateral.jpg", 0);
+	t_c6_superior = generateTextures("Texturas/CasaRick/c6_superior.jpg", 0);
+	t_t1_frontal = generateTextures("Texturas/CasaRick/t1_frontal.jpg", 0);
+	t_t1_lateral = generateTextures("Texturas/CasaRick/t1_lateral.jpg", 0);
+	t_t1_trasera = generateTextures("Texturas/CasaRick/t1_trasera.jpg", 0);
+	t_c2_lateral = generateTextures("Texturas/CasaRick/c2_lateral.jpg", 0);
+	t_c4_frontal = generateTextures("Texturas/CasaRick/c4_frontal.jpg", 0);
+	t_c4_lateral_izq = generateTextures("Texturas/CasaRick/c4_lateral_izq.jpg", 0);
+	t_c5_lateral = generateTextures("Texturas/CasaRick/c5_lateral.jpg", 0);
+	t_c5_frontal = generateTextures("Texturas/CasaRick/c5_frontal.jpg", 0);
+	t_c6_lateral = generateTextures("Texturas/CasaRick/c6_lateral.jpg", 0);
+	t_c6_frontal = generateTextures("Texturas/CasaRick/c6_frontal.jpg", 0);
+	t_t3_frontal = generateTextures("Texturas/CasaRick/t3_frontal.jpg", 0);
+	t_t3_trasera = generateTextures("Texturas/CasaRick/t3_trasera.jpg", 0);
 }
 
 void myData()
@@ -204,42 +236,96 @@ void myData()
 		// positions          // normals           // texture coords
 
 		//Cubo
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, 0.5f, 	0.0f,0.0f,1.0f, 	0.0f, 0.0f,//V0 - Frontal
+		0.5f, -0.5f, 0.5f,		0.0f,0.0f,1.0f, 	1.0f, 0.0f,//V1
+		0.5f, 0.5f, 0.5f,			0.0f,0.0f,1.0f,		1.0f, -1.0f,//V5
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, 0.5f, 	0.0f,0.0f,1.0f,		0.0f, 0.0f,//V0
+		0.5f, 0.5f, 0.5f,			0.0f,0.0f,1.0f,		1.0f, -1.0f,//V5
+		-0.5f, 0.5f, 0.5f,		0.0f,0.0f,1.0f,		0.0f, -1.0f,//V4
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, 	0.0f,0.0f,-1.0f,	1.0f, 0.0f,//V3 - Trasera
+		0.5f, -0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, 0.0f,//V2
+		0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, -1.0f,//V6
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, 	0.0f,0.0f,-1.0f,	1.0f, 0.0f,//V3
+		0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, -1.0f,//V6
+		-0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	1.0f, -1.0f,//V7
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, 0.5f,	 	-1.0f,0.0f,0.0f,		1.0f, 0.0f,//V0 - Izq
+		-0.5f, -0.5f, -0.5f, 	-1.0f,0.0f,0.0f,		0.0f, 0.0f,//V3
+		-0.5f, 0.5f, -0.5f,	 	-1.0f,0.0f,0.0f,		0.0f, -1.0f,//V7
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, 0.5f, 	-1.0f,0.0f,0.0f,		1.0f, 0.0f,//V0
+		-0.5f, 0.5f, -0.5f, 	-1.0f,0.0f,0.0f,		0.0f, -1.0f,//V7
+		-0.5f, 0.5f, 0.5f,		-1.0f,0.0f,0.0f,		1.0f, -1.0f,//V4
+
+		0.5f, -0.5f, 0.5f,		1.0f,0.0f,0.0f,	0.0f, 0.0f,//V1 - Der
+		0.5f, -0.5f, -0.5f, 	1.0f,0.0f,0.0f,	1.0f, 0.0f,//V2
+		0.5f, 0.5f, -0.5f,		1.0f,0.0f,0.0f,	1.0f, -1.0f,//V6
+
+		0.5f, -0.5f, 0.5f, 		1.0f,0.0f,0.0f,	0.0f, 0.0f,//V1
+		0.5f, 0.5f, -0.5f, 		1.0f,0.0f,0.0f,	1.0f, -1.0f,//V6
+		0.5f, 0.5f, 0.5f,	 		1.0f,0.0f,0.0f,	0.0f, -1.0f,//V5
+
+		-0.5f, 0.5f, 0.5f, 		0.0f,1.0f,0.0f,		0.0f, 0.0f,//V4 - Sup
+		0.5f, 0.5f, 0.5f,	 		0.0f,1.0f,0.0f, 	1.0f, 0.0f,//V5
+		0.5f, 0.5f, -0.5f, 		0.0f,1.0f,0.0f,		1.0f, -1.0f,//V6
+
+		-0.5f, 0.5f, 0.5f,		0.0f,1.0f,0.0f,		0.0f, 0.0f,//V4
+		0.5f, 0.5f, -0.5f,		0.0f,1.0f,0.0f,		1.0f, -1.0f,//V6
+		-0.5f, 0.5f, -0.5f, 	0.0f,1.0f,0.0f,		0.0f, -1.0f,//V7
+
+		-0.5f, -0.5f, 0.5f, 	0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V0 - Inf
+		0.5f, -0.5f, 0.5f,		0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V1
+		0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V2
+
+		-0.5f, -0.5f, 0.5f,	 	0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V0
+		0.5f, -0.5f, -0.5f,	 	0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V2
+		-0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V3
 
 
-		//Piso
-		-0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-		 0.5f,  0.0f, -0.5f,  0.0f,  1.0f,  0.0f,  10.0f,  0.0f,
-		 0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,  10.0f,  10.0f,
-		-0.5f,  0.0f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  10.0f,
+		//techo, indice=36
+		-0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
+		0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
+		0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
+
+		-0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
+		0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
+		0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
+
+		0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
+		0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
+		0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
+
+		0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
+		0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
+		0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
+
+		-0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
+		-0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
+		0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+
+		-0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
+		0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+		0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
+
+		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
+		0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
+		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+
+		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
+		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+		-0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
+
+
+		//Piso, índice= 60
+		-0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+		 0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+		 0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
+		-0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
+
+
 
 	};
 	unsigned int indices[] = {
@@ -407,6 +493,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 	// create transformations and Projection
 	glm::mat4 tmp = glm::mat4(1.0f);
+	glm::mat4 origin,temp = glm::mat4(1.0f); //Pivotes casa de rick
 	glm::mat4 model = glm::mat4(1.0f);		// initialize Matrix, Use this matrix for individual models
 	glm::mat4 view = glm::mat4(1.0f);		//Use this matrix for ALL models
 	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
@@ -433,18 +520,19 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_piso_m);
-	glDrawArrays(GL_QUADS, 24, 4);
+	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
 	//Sector B
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(19.0f, 0.01f, -23.0f));
 	tmp = model;
+	origin = model;
 	model = glm::scale(model, glm::vec3(42.0f, 1.0f, 14.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_piso_b);
-	glDrawArrays(GL_QUADS, 24, 4);
+	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
 	//Edificio 5
@@ -453,6 +541,157 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
 	shader.setMat4("model", model);
 	edificio5.Draw(shader);
+
+	//Casa de rick
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	origin = glm::translate(tmp, glm::vec3(8.0f, 0.8f, 0.0f));
+	origin = glm::scale(origin, glm::vec3(0.4f, 0.4f, 0.4f));
+	model = glm::scale(origin, glm::vec3(6.0f, 4.0f, 10.0f));
+	shader.setMat4("model", model);
+
+	//Cubo 1
+	glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
+	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
+	glDrawArrays(GL_TRIANGLES, 6, 6); //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
+	glDrawArrays(GL_TRIANGLES, 24, 6); //Superior 
+	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+	
+	model = glm::translate(origin, glm::vec3(0.0f, 3.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(7.0f, 3.0f, 10.0f));
+	shader.setMat4("model", model);
+
+	//Techo 1
+	glBindTexture(GL_TEXTURE_2D, t_t1_frontal);
+	glDrawArrays(GL_TRIANGLES, 36, 3); //Frontal
+	glBindTexture(GL_TEXTURE_2D, t_t1_trasera);
+	glDrawArrays(GL_TRIANGLES, 39, 3); //Trasera
+	glBindTexture(GL_TEXTURE_2D, t_t1_lateral);
+	glDrawArrays(GL_TRIANGLES, 42, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 48, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c6_superior);
+	glDrawArrays(GL_TRIANGLES, 54, 6); //Inferior
+
+	model = glm::translate(origin, glm::vec3(5.5f, 0.0f, -2.5f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	temp = model;
+	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.5f));
+	model = glm::scale(model, glm::vec3(5.0f, 4.0f, 8.0f));
+	shader.setMat4("model", model);
+
+	// Cubo 2
+	//glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
+	//glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	//glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
+	//glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	glBindTexture(GL_TEXTURE_2D, t_c2_lateral);
+	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
+	glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
+	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 2.8333f, 0.0f));
+	model = glm::scale(model, glm::vec3(5.0f, 2.5f, 11.0f));
+	shader.setMat4("model", model);
+	shader.setVec3("aColor", 0.5f, 0.5f, 0.5f);
+
+	//Techo 2
+	//glBindTexture(GL_TEXTURE_2D, t_t1_frontal);
+	//glDrawArrays(GL_TRIANGLES, 36, 3); //Frontal
+	//glBindTexture(GL_TEXTURE_2D, t_t1_trasera);
+	//glDrawArrays(GL_TRIANGLES, 39, 3); //Trasera
+	glBindTexture(GL_TEXTURE_2D, t_t1_lateral);
+	glDrawArrays(GL_TRIANGLES, 42, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 48, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c6_superior);
+	glDrawArrays(GL_TRIANGLES, 54, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 0.0f, 8.5f));
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	temp = model;
+	model = glm::scale(model, glm::vec3(6.0f, 4.0f, 5.0f));
+	shader.setMat4("model", model);
+	
+	//Cubo 3
+	//glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
+	//glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
+	glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	//glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
+	//glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
+	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 0.0f, 5.5f));
+	model = glm::scale(model, glm::vec3(6.0f, 4.0f, 6.0f));
+	shader.setMat4("model", model);
+	
+	//Cubo 4
+	glBindTexture(GL_TEXTURE_2D, t_c4_frontal);
+	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	glBindTexture(GL_TEXTURE_2D, t_c4_lateral_izq);
+	//glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
+	//glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
+	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 2.5f, 5.5f));
+	model = glm::scale(model, glm::vec3(6.5f, 1.0f, 6.0f));
+	shader.setMat4("model", model);
+	
+	//Cubo 6
+	glBindTexture(GL_TEXTURE_2D, t_c6_frontal);
+	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	glBindTexture(GL_TEXTURE_2D, t_c6_lateral);
+	//glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c6_superior);
+	glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
+	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 3.5f, 0.0f));
+	temp = model;
+	model = glm::scale(model, glm::vec3(6.0f, 3.0f, 5.0f));
+	shader.setMat4("model", model);
+	
+	//Cubo 5
+	glBindTexture(GL_TEXTURE_2D, t_c5_frontal);
+	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
+	glBindTexture(GL_TEXTURE_2D, t_c5_lateral);
+	glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
+	//glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
+	//glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
+	//glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
+
+	model = glm::translate(temp, glm::vec3(0.0f, 2.1666f, 0.0f));
+	model = glm::scale(model, glm::vec3(7.0f, 2.0f, 5.0f));
+	shader.setMat4("model", model);
+	
+	//Techo 3
+	glBindTexture(GL_TEXTURE_2D, t_t3_frontal);
+	glDrawArrays(GL_TRIANGLES, 36, 3); //Frontal
+	glBindTexture(GL_TEXTURE_2D, t_t3_trasera);
+	glDrawArrays(GL_TRIANGLES, 39, 3); //Trasera
+	glBindTexture(GL_TEXTURE_2D, t_t1_lateral);
+	glDrawArrays(GL_TRIANGLES, 42, 6); //Lateral Izquierda
+	glDrawArrays(GL_TRIANGLES, 48, 6); //Lateral Derecha
+	glBindTexture(GL_TEXTURE_2D, t_c6_superior);
+	glDrawArrays(GL_TRIANGLES, 54, 6); //Inferior
+	
+	glBindVertexArray(0);
 	
 	//Sector D
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
@@ -462,7 +701,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_piso_b);
-	glDrawArrays(GL_QUADS, 24, 4);
+	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
 	//Edificio 6
@@ -487,7 +726,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, t_grass_m);
-	glDrawArrays(GL_QUADS, 24, 4);
+	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
 	//�rbol 1
@@ -710,9 +949,9 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
 		posY--;
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		rotCabeza++;
+		rotCabeza+=20;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		rotCabeza--;
+		rotCabeza-=20;
 	
 	
 	//To play KeyFrame animation 
