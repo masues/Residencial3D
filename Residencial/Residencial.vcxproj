@@ -126,9 +126,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main_mario.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -155,6 +152,9 @@
     <None Include="shaders\shader_texture_color.vs" />
     <None Include="shaders\SkyBox.frag" />
     <None Include="shaders\SkyBox.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mainPrincipal.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
