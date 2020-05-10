@@ -106,6 +106,8 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].posY = posY;
 	KeyFrame[FrameIndex].posZ = posZ;
 
+	printf("posX=%f, posY=%f, posZ=%f\n", posX,posY,posZ);
+
 	KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
 	KeyFrame[FrameIndex].giroMonito = giroMonito;
 	KeyFrame[FrameIndex].movBrazo = movBrazo;
@@ -365,7 +367,9 @@ void animate(void)
 
 void display(	Shader shader, Shader skyboxShader, GLuint skybox, 
 				Model botaDer, Model piernaDer, Model piernaIzq, Model torso,
-				Model brazoDer, Model brazoIzq, Model cabeza, Model piso)
+				Model brazoDer, Model brazoIzq, Model cabeza, Model piso,
+				Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
+				Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia)
 {
 	shader.use();
 
@@ -415,58 +419,45 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox,
 	shader.setMat4("model", model);
 	piso.Draw(shader);
 
-	//Personaje
+	//Cuerpo Leia
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0, 1, 0));
+	model = glm::translate(model, glm::vec3(0.51f, 10.491f, -0.782f));
 	model = glm::translate(model, glm::vec3(posX, posY, posZ));
 	tmp = model = glm::rotate(model, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	torso.Draw(shader);
+	cuerpoLeia.Draw(shader);
 
-	//Pierna Der
-	model = glm::translate(tmp, glm::vec3(-0.5f, 0.0f, -0.1f));
+	//Pierna Der Leia
+	model = glm::translate(tmp, glm::vec3(-3.539f, 0.035f, 0.027f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
 	shader.setMat4("model", model);
-	piernaDer.Draw(shader);
+	piernaDerLeia.Draw(shader);
 
-	//Pie Der
-	model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-	shader.setMat4("model", model);
-	botaDer.Draw(shader);
-
-	//Pierna Izq
-	model = glm::translate(tmp, glm::vec3(0.5f, 0.0f, -0.1f));
+	//Pierna Izq Leia
+	model = glm::translate(tmp, glm::vec3(3.642f, 0.06f, 0.001f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
 	shader.setMat4("model", model);
-	piernaIzq.Draw(shader);
+	piernaIzqLeia.Draw(shader);
 
-	//Pie Iz
-	model = glm::translate(model, glm::vec3(0, -0.9f, -0.2f));
-	shader.setMat4("model", model);
-	botaDer.Draw(shader);	//Izq trase
-
-	//Brazo derecho
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(-0.75f, 2.5f, 0));
+	//Brazo derecho Leia
+	model = glm::translate(tmp, glm::vec3(-5.667f, 12.835f, 0.197f));
 	model = glm::rotate(model, glm::radians(-movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
 	shader.setMat4("model", model);
-	brazoDer.Draw(shader);
+	brazoDerLeia.Draw(shader);
 
-	//Brazo izquierdo
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
-	model = glm::translate(model, glm::vec3(0.75f, 2.5f, 0));
+	//Brazo izquierdo Leia
+	model = glm::translate(tmp, glm::vec3(5.598f, 12.291f, -0.498f));
 	model = glm::rotate(model, glm::radians(movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
 	shader.setMat4("model", model);
-	brazoIzq.Draw(shader);
+	brazoIzqLeia.Draw(shader);
 
 	//Cabeza
-	model = glm::translate(tmp, glm::vec3(0.0f, - 1.0f, 0.0f));
+	model = glm::translate(tmp, glm::vec3(0.237f, 16.214f, 0.016f));
 	model = glm::rotate(model, glm::radians(rotCabeza), glm::vec3(0.0f, 1.0f, 0.0));
-	model = glm::translate(model, glm::vec3(0.0f, 2.5f, 0));
 	shader.setMat4("model", model);
-	cabeza.Draw(shader);
+	cabezaLeia.Draw(shader);
 
 
 	// Draw skybox as last
@@ -544,6 +535,14 @@ int main()
 	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
 	Model pisoModel = ((char *)"Models/piso/piso.obj");
 
+	Model cabezaLeia = ((char *)"Models/LegoLeia/cabezaLeia.obj");
+	Model cuerpoLeia = ((char *)"Models/LegoLeia/cuerpoLeia.obj");
+	Model brazoDerLeia = ((char *)"Models/LegoLeia/brazoDerLeia.obj");
+	Model brazoIzqLeia = ((char *)"Models/LegoLeia/brazoIzqLeia.obj");
+	Model piernaDerLeia = ((char *)"Models/LegoLeia/piernaDerLeia.obj");
+	Model piernaIzqLeia = ((char *)"Models/LegoLeia/piernaIzqLeia.obj");
+
+
 	//Inicialización de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
 	{
@@ -593,7 +592,8 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture, 
 				botaDer, piernaDer,
 				piernaIzq, torso, brazoDer, brazoIzq,
-				cabeza, pisoModel);
+				cabeza, pisoModel, cabezaLeia, cuerpoLeia, brazoDerLeia,
+				brazoIzqLeia, piernaDerLeia, piernaIzqLeia);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
