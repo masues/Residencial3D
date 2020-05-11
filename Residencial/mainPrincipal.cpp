@@ -85,6 +85,18 @@ t_letrero_C,
 t_frente_C,
 t_atico_C;
 
+//Animación Carro
+float movAuto_z = 0.0f,
+			movAuto_x = 0.0f,
+			orienta = 0.0f;
+bool animacion = false,
+		 recorrido1 = true,
+		 recorrido2 = false,
+		 recorrido3 = false,
+		 recorrido4 = false,
+		 recorrido5 = false,
+		 recorrido6 = false;
+
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
 posY = 0.0f,
@@ -642,7 +654,8 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
 	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
 	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
-	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia)
+	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
+	Model carro, Model llantas)
 {
 	shader.use();
 
@@ -713,6 +726,37 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glBindVertexArray(0);
 
 
+
+	//Carro
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); //Mover aqui la posición incial del coche.
+	model = glm::translate(model, glm::vec3(movAuto_x, 0.0f, movAuto_z));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	tmp = model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	carro.Draw(shader);
+
+	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, 1.29f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	llantas.Draw(shader); //Izq delantera
+
+	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, 1.29f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("model", model);
+	llantas.Draw(shader); //Der delantera
+
+	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, -1.45f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("model", model);
+	llantas.Draw(shader); //Der trasera
+
+	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, -1.45f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	llantas.Draw(shader); //Izq trase
 
 
 
@@ -1432,6 +1476,10 @@ int main()
 	Model piernaDerLeia = ((char *)"Models/LegoLeia/piernaDerLeia.obj");
 	Model piernaIzqLeia = ((char *)"Models/LegoLeia/piernaIzqLeia.obj");
 
+	//Carro
+	Model carro = ((char *)"Models/Lambo/carroseria.obj");
+	Model llantasModel = ((char *)"Models/Lambo/Wheel.obj");
+
 	//Inicializaci�n de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
 	{
@@ -1483,7 +1531,7 @@ int main()
 			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
 			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro,
 			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
-			piernaIzqLeia);
+			piernaIzqLeia, carro, llantasModel);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
