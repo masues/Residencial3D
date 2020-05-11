@@ -639,7 +639,8 @@ void animate(void)
 
 void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	Model edificio6, Model edificio7, Model tree1, Model tree2,
-	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4, Model farola)
+	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
+	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro)
 {
 	shader.use();
 
@@ -906,6 +907,13 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glBindTexture(GL_TEXTURE_2D, t_piso_parque);
 	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
+
+	//Fuente
+	//model = glm::scale(sectorC, glm::vec3(14.0f, 1.0f, 38.0f));
+	model = sectorC;
+	shader.setMat4("model", model);
+	fuente.Draw(shader);
+
 
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, 12.0f));
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
@@ -1322,15 +1330,6 @@ int main()
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
 
 	// Load models
-	/*
-	Model botaDer = ((char *)"Models/Personaje/bota.obj");
-	Model piernaDer = ((char *)"Models/Personaje/piernader.obj");
-	Model piernaIzq = ((char *)"Models/Personaje/piernader.obj");
-	Model torso = ((char *)"Models/Personaje/torso.obj");
-	Model brazoDer = ((char *)"Models/Personaje/brazoder.obj");
-	Model brazoIzq = ((char *)"Models/Personaje/brazoizq.obj");
-	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
-	Model pisoModel = ((char *)"Models/piso/piso.obj");*/
 	Model edificio1Model = ((char *)"Models/Edificio1/OBJ/city3.obj");
 	Model edificio2Model = ((char *)"Models/Edificio2/File-Obj/Edificio7.obj");
 	Model edificio3Model = ((char *)"Models/Edificio3/building_04.obj");
@@ -1342,6 +1341,11 @@ int main()
 	Model tree2 = ((char *)"Models/Trees/Tree2/tree2.obj");
 	Model tree3 = ((char *)"Models/Trees/Tree3/tree3.obj");
 	Model farolaModel = ((char *)"Models/Farola/rv_lamp_post_3.obj");
+	Model fuente = ((char *)"Models/Fuente/fuente.obj");
+	Model balon = ((char *)"Models/Balon/balon.obj");
+	Model rick = ((char *)"Models/Rick/rick.obj");
+	Model frisbee = ((char *)"Models/Frisbee/frisbee.obj");
+	Model perro = ((char *)"Models/Perro/perro.obj");
 
 	//Inicializaci�n de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
@@ -1391,7 +1395,8 @@ int main()
 		//display(modelShader, ourModel, llantasModel);
 		display(modelShader, SkyBoxshader, cubemapTexture,
 			edificio5, edificio6, edificio7,
-			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model, edificio4Model, farolaModel);
+			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
+			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

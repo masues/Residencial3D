@@ -1,0 +1,16 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 10.05.2020 00:39:46
+
+newmtl Material_003
+	Ns 32.6421
+	Ni 1.5000
+	d 0.2000
+	Tr 0.8000
+	Tf 0.2000 0.2000 0.2000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.6400 0.6400 0.6400
+	Ks 0.2500 0.2500 0.2500
+	Ke 0.0000 0.0000 0.0000
+	map_Ka Rick.jpg
+	map_Kd Rick.jpg
