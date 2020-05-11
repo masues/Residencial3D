@@ -909,13 +909,13 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glBindVertexArray(0);
 
 	//Fuente
-	//model = glm::scale(sectorC, glm::vec3(14.0f, 1.0f, 38.0f));
 	model = sectorC;
 	shader.setMat4("model", model);
 	fuente.Draw(shader);
 
-
+	//Pasto Sur
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, 12.0f));
+	tmp = model;
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
@@ -926,6 +926,28 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	//glDrawArrays(GL_TRIANGLES, 64, 6);
 	glBindVertexArray(0);
 
+	//Perro
+	model = tmp;
+	model = glm::scale(model, glm::vec3(0.02762f, 0.02762f, 0.02762f));
+	shader.setMat4("model", model);
+	perro.Draw(shader);
+
+	//Frisbee
+	model = glm::translate(tmp,glm::vec3(2.0f,1.0f,0.0f));
+	model = glm::rotate(model,glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
+	shader.setMat4("model", model);
+	frisbee.Draw(shader);
+
+	//Balon
+	model = glm::translate(tmp, glm::vec3(-2.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
+	shader.setMat4("model", model);
+	balon.Draw(shader);
+
+	//
+
+	//Pasto Norte
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, -12.0f));
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
