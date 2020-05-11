@@ -686,7 +686,7 @@ void animate(void)
 	{ //Función y=-0.05z^2 +4
 		if (!regresoFrisbee)
 		{
-			if (movFrisbee_z >= -8.5f)
+			if (movFrisbee_z >= -8.0f)
 			{
 				movFrisbee_z -= 1.0;
 				movFrisbee_y = (-0.05 * (pow(movFrisbee_z, 2))) + 4;
@@ -759,7 +759,7 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glm::mat4 base = glm::mat4(1.0f);	//This matrix is for Projection
 
 										//Use "projection" to include Camera
-	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50.0f);
+	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 300.0f);
 	view = camera.GetViewMatrix();
 
 	//Scenario Rotation
@@ -1033,7 +1033,7 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	frisbee.Draw(shader); //
 
 	//Balon
-	model = glm::translate(tmp, glm::vec3(2.0f, 1.0f, 0.0f));
+	model = glm::translate(tmp, glm::vec3(2.0f, 0.2f, 1.0f));
 	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
 	shader.setMat4("model", model);
 	balon.Draw(shader);
