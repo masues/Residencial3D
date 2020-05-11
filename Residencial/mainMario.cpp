@@ -86,16 +86,16 @@ t_frente_C,
 t_atico_C;
 
 //Animación Carro
-float movAuto_z = 0.0f,
-movAuto_x = 0.0f,
-orienta = 0.0f;
-bool animacion = false,
-recorrido1 = true,
-recorrido2 = false,
-recorrido3 = false,
-recorrido4 = false,
-recorrido5 = false,
-recorrido6 = false;
+float movAuto_z,
+movAuto_x,
+orienta = -90.0f;
+int recorridoCoche=1;
+bool animacion = false;
+float r = 19;
+float centroX = -25;
+float centroZ = -25;
+float thetaRot = 90;
+#define PI 3.14159265
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
@@ -612,6 +612,7 @@ void myData2()
 
 void animate(void)
 {
+	//keyframes
 	if (play)
 	{
 		if (i_curr_steps >= i_max_steps) //end of animation between frames?
@@ -649,8 +650,30 @@ void animate(void)
 
 	}
 
+	//Veh�culo
+	if (animacion)
+	{
+		switch (recorridoCoche) {
+		case 1:
+			movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+			movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
+			orienta = -thetaRot;
+			thetaRot -= 1.2;
+			if (thetaRot < 0) //Dos vueltas
+				recorridoCoche = 2;
+			break;
+		case 2:
+			movAuto_z += 0.8f;
+			orienta = 0.0f;
+			if (movAuto_z > 20.0f)
+			{
+				recorridoCoche = 1;
+				animacion = false;
+			}
+			break;
+		}
+	}
 }
-
 void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	Model edificio6, Model edificio7, Model tree1, Model tree2,
 	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
@@ -730,35 +753,34 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 
 
 	//Carro
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); //Mover aqui la posición incial del coche.
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	model = glm::translate(model, glm::vec3(movAuto_x, 0.0f, movAuto_z));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	tmp = model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	shader.setMat4("model", model);
-	//carro.Draw(shader);
+	carro.Draw(shader);
 
 	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, 1.29f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	shader.setMat4("model", model);
-	//llantas.Draw(shader); //Izq delantera
+	llantas.Draw(shader); //Izq delantera
 
 	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, 1.29f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("model", model);
-	//llantas.Draw(shader); //Der delantera
+	llantas.Draw(shader); //Der delantera
 
 	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, -1.45f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("model", model);
-	//llantas.Draw(shader); //Der trasera
+	llantas.Draw(shader); //Der trasera
 
 	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, -1.45f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	shader.setMat4("model", model);
-	//llantas.Draw(shader); //Izq trase
+	llantas.Draw(shader); //Izq trase
 
 
 
@@ -1448,6 +1470,9 @@ int main()
 	myData2();
 	glEnable(GL_DEPTH_TEST);
 
+	movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+	movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
+
 	//Shaders
 	Shader modelShader("Shaders/shader_Lights.vs", "Shaders/shader_Lights.fs");
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
@@ -1638,7 +1663,17 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		rotCabeza += 20;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
 		rotCabeza -= 20;
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		animacion ^= true;
+		//recorridoCoche = 1;
 
+		thetaRot = 90;
+		orienta = -thetaRot;
+
+		movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+		movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
+	}
 
 	//To play KeyFrame animation 
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
