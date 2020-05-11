@@ -1028,8 +1028,8 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	//Casa de rick
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
-	origin = glm::translate(tmp, glm::vec3(8.0f, 0.8f, 0.0f));
-	origin = glm::scale(origin, glm::vec3(0.4f, 0.4f, 0.4f));
+	origin = glm::translate(tmp, glm::vec3(8.0f, 1.0f, 0.0f));
+	origin = glm::scale(origin, glm::vec3(0.5f, 0.5f, 0.5f));
 	model = glm::scale(origin, glm::vec3(6.0f, 4.0f, 10.0f));
 	shader.setMat4("model", model);
 
@@ -1175,6 +1175,13 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glDrawArrays(GL_TRIANGLES, 54, 6); //Inferior
 
 	glBindVertexArray(0);
+
+	//Rick Sánchez
+	model = glm::translate(tmp, glm::vec3(8.0f, 0.0f, 5.0f));
+	model = glm::scale(model, glm::vec3(0.0054603f, 0.0054603f, 0.0054603f));
+	shader.setMat4("model", model);
+	rick.Draw(shader);
+
 
 	//Sector D
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
