@@ -86,16 +86,22 @@ t_frente_C,
 t_atico_C;
 
 //Animación Carro
-float movAuto_z = 0.0f,
-			movAuto_x = 0.0f,
-			orienta = 0.0f;
-bool animacion = false,
-		 recorrido1 = true,
-		 recorrido2 = false,
-		 recorrido3 = false,
-		 recorrido4 = false,
-		 recorrido5 = false,
-		 recorrido6 = false;
+float movAuto_z,
+		movAuto_x,
+		orienta = -90.0f;
+int recorridoCoche = 1;
+bool animacion = false;
+float r = 15;
+float centroX = -21;
+float centroZ = -25;
+float thetaRot = 90;
+#define PI 3.14159265
+
+//Animación Frisbee
+bool animacionFrisbee = false;
+bool regresoFrisbee = false;
+float movFrisbee_z = 8.7f;
+float movFrisbee_y = 0.2f;
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
@@ -115,7 +121,7 @@ movBrazoInc = 0.0f,
 rotCabezaInc = 0.0f;
 
 #define MAX_FRAMES 9
-int i_max_steps = 190; //Cantidad m�xima de frames intermedios
+int i_max_steps = 20; //Cantidad m�xima de frames intermedios
 int i_curr_steps = 0;
 typedef struct _frame
 {
@@ -131,7 +137,7 @@ typedef struct _frame
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;			//introducir datos
+int FrameIndex = 6;			//introducir datos
 bool play = false;
 int playIndex = 0;
 
@@ -143,11 +149,13 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].posX = posX;
 	KeyFrame[FrameIndex].posY = posY;
 	KeyFrame[FrameIndex].posZ = posZ;
+	printf("posX=%f, posY=%f, posZ=%f\n", posX, posY, posZ);
 
 	KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
 	KeyFrame[FrameIndex].giroMonito = giroMonito;
 	KeyFrame[FrameIndex].movBrazo = movBrazo;
 	KeyFrame[FrameIndex].rotCabeza = rotCabeza;
+	printf("rotRodIzq=%f, giroMonito=%f\nmovBrazo=%f, rotCabeza=%f\n", rotRodIzq, giroMonito, movBrazo, rotCabeza);
 
 	FrameIndex++;
 }
@@ -318,202 +326,202 @@ void myData()
 		-0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V3
 
 
-															   //techo, indice=36
-															   -0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
-															   0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
-															   0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
+		//techo, indice=36
+		-0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
+		0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
+		0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
 
-															   -0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
-															   0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
-															   0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
+		-0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
+		0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
+		0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
 
-															   0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
-															   0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
-															   0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
+		0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
+		0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
+		0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
 
-															   0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
-															   0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
-															   0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
+		0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
+		0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
+		0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
 
-															   -0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
-															   -0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
-															   0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+		-0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
+		-0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
+		0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
 
-															   -0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
-															   0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
-															   0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
+		-0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
+		0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+		0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
 
-															   0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
-															   0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
-															   -0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
+		0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
+		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
 
-															   0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
-															   -0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
-															   -0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
-
-
-																													   //Piso, índice= 60
-																													   -0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-																													   0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-																													   0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-																													   -0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
-
-																													   //Pentagono Pasto, índice= 64
-																													   -0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-																													   0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-																													   -0.5f,	0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-																													   -0.5f,  0.0f,	0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-																													   0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-																													   0.2f,  0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
-
-																													   //70
-																													   //Cordenadas 			Normales 				Texturas
-																													   -0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// V0 A Cara frontal
-																													   0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-																													   -0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-																													   0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-																													   -0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-																													   0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
-
-																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	// E Cara trasera
-																													   0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-																													   -0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
-																													   0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-																													   -0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
-																													   0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// H
-
-																													   -0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Cara Abajo
-																													   0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
-																													   0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
-																													   0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// F
-
-																													   -0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// C Cara Arriba
-																													   0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-																													   -0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-																													   0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-																													   -0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-																													   0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
-
-																													   -0.5f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// A Cara Izquierda
-																													   -0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
-																													   -0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-																													   -0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
-																													   -0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-																													   -0.5f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// G
-
-																													   0.5f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// B Cara Derecha
-																													   0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
-																													   0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-																													   0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
-																													   0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-																													   0.5f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// H  35
-
-																																														//Triángulo
-																																														-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.1f,	//V36 A Cara delatera
-																																														0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.1f,	// B
-																																														0.0f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.5f,	0.95f,	// C
-
-																																														-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.1f,	// D Cara trasera
-																																														0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.1f,	// E
-																																														0.0f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.5f,	0.95f,	// F
-
-																																														-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// Cara Baja
-																																														0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-																																														-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-																																														0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-																																														-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-																																														0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-
-																																														-0.5f,	-0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// A Cara izquierda
-																																														0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-																																														-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D
-																																														0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-																																														-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D 
-																																														0.0f,	0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F
-
-																																														0.5f,	-0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// B Cara derecha
-																																														0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-																																														0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E
-																																														0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-																																														0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E 
-																																														0.0f,	0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F 24
+		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
+		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+		-0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
 
 
+		//Piso, índice= 60
+		-0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+		0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+		0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
+		-0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
 
-																																																														//Ventana
-																																																														-0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// A 40 Cuadrado principal
-																																																														0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-																																																														0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+		//Pentagono Pasto, índice= 64
+		-0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+		-0.5f,	0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
+		-0.5f,  0.0f,	0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+		0.2f,  0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
 
-																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// C Pentágono
-																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	.0f,	0.0f,	// D
-																																																														-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
-																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// D
-																																																														-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
-																																																														0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// F
+		//70
+		//Cordenadas 			Normales 				Texturas
+		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// V0 A Cara frontal
+		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+		0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+
+		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	// E Cara trasera
+		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
+		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
+		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
+		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
+		0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// H
+
+		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Cara Abajo
+		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
+		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
+		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// F
+
+		-0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// C Cara Arriba
+		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
+		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
+		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+		0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
+
+		-0.5f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// A Cara Izquierda
+		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
+		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
+		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
+		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
+		-0.5f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// G
+
+		0.5f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// B Cara Derecha
+		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
+		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
+		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
+		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
+		0.5f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// H  35
+
+		//Triángulo
+		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.1f,	//V36 A Cara delatera
+		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.1f,	// B
+		0.0f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.5f,	0.95f,	// C
+
+		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.1f,	// D Cara trasera
+		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.1f,	// E
+		0.0f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.5f,	0.95f,	// F
+
+		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// Cara Baja
+		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+
+		-0.5f,	-0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// A Cara izquierda
+		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D
+		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D 
+		0.0f,	0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F
+
+		0.5f,	-0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// B Cara derecha
+		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E
+		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E 
+		0.0f,	0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F 24
 
 
-																																																														-0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  Atrás
-																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  
-																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-																																																														0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
+		//Ventana
+		-0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// A 40 Cuadrado principal
+		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+
+		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// C Pentágono
+		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	.0f,	0.0f,	// D
+		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
+		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// D
+		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
+		0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// F
 
 
-																																																														-0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// E Arriba
-																																																														0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-																																																														0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-																																																														0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
+		-0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  Atrás
+		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-																																																														0.25f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F  Lado derecho
-																																																														0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
-																																																														0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
-																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// I
+		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  
+		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+		0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// D
-																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-																																																														0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
-																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-																																																														0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
-																																																														0.35f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// J
 
-																																																														-0.25f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E  Lado izquierdo
-																																																														-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
-																																																														-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
-																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// K
+		-0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// E Arriba
+		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
+		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
+		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+		0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
 
-																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// C Lado Izquierdo
-																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-																																																														-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
-																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-																																																														-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
-																																																														-0.35f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// L
+		0.25f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F  Lado derecho
+		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
+		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
+		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
+		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
+		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// I
 
-																																																														-0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Abajo
-																																																														0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
-																																																														0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
-																																																														-0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// L  48
+		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// D
+		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
+		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
+		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
+		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
+		0.35f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// J
+
+		-0.25f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E  Lado izquierdo
+		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
+		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
+		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
+		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
+		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// K
+
+		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// C Lado Izquierdo
+		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
+		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
+		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
+		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
+		-0.35f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// L
+
+		-0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Abajo
+		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
+		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
+		-0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// L  48
 
 
 	};
@@ -610,6 +618,7 @@ void myData2()
 
 void animate(void)
 {
+	//Animación Keyframes
 	if (play)
 	{
 		if (i_curr_steps >= i_max_steps) //end of animation between frames?
@@ -644,9 +653,58 @@ void animate(void)
 
 			i_curr_steps++;
 		}
-
 	}
 
+	//Animación Coche
+	if (animacion)
+	{
+		switch (recorridoCoche)
+		{
+		case 1:
+			movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+			movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
+			orienta = -thetaRot;
+			thetaRot -= 1.2;
+			if (thetaRot < 0) //Dos vueltas
+				recorridoCoche = 2;
+			break;
+		case 2:
+			movAuto_z += 0.8f;
+			orienta = 0.0f;
+			if (movAuto_z > 20.0f)
+			{
+				recorridoCoche = 1;
+				animacion = false;
+			}
+			break;
+		}
+	}
+
+
+	//Animación Frisbee
+	if (animacionFrisbee)
+	{ //Función y=-0.05z^2 +4
+		if (!regresoFrisbee)
+		{
+			if (movFrisbee_z >= -8.5f)
+			{
+				movFrisbee_z -= 1.0;
+				movFrisbee_y = (-0.05 * (pow(movFrisbee_z, 2))) + 4;
+			}
+			else
+				regresoFrisbee = true;
+		}
+		else
+		{
+			if (movFrisbee_z <= 8.5f)
+			{
+				movFrisbee_z += 1.0;
+				movFrisbee_y = (-0.05 * (pow(movFrisbee_z, 2))) + 4;
+			}
+			else
+				regresoFrisbee = false;
+		}
+	}
 }
 
 void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
@@ -728,9 +786,8 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 
 
 	//Carro
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); //Mover aqui la posición incial del coche.
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 	model = glm::translate(model, glm::vec3(movAuto_x, 0.0f, movAuto_z));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	tmp = model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
 	shader.setMat4("model", model);
@@ -836,16 +893,6 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	farola.Draw(shader);
 
 
-	/*
-	cenEdif4 = glm::translate(sectorC, glm::vec3(-15.0f, 0.1f, 11.0f));
-	for (int i = 1; i <= 7; i++) {
-	model = glm::translate(cenEdif4, glm::vec3(0.0f, 0.01f,
-	7.0f * (float)pow(-1.0f, (float)i)));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-	}
-	*/
 
 	//Casa
 	temporal = cenCasa = model = glm::translate(sectorC, glm::vec3(-30.0f, 1.76f, -27.0f));
@@ -978,15 +1025,15 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	shader.setMat4("model", model);
 	perro.Draw(shader);
 
-	//Frisbee
-	model = glm::translate(tmp,glm::vec3(2.0f,1.0f,0.0f));
-	model = glm::rotate(model,glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
+	//frisbee
+	model = glm::translate(sectorC, glm::vec3(-4.0f, movFrisbee_y, movFrisbee_z)); //-7.0f
+	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0));
 	shader.setMat4("model", model);
-	frisbee.Draw(shader);
+	frisbee.Draw(shader); //
 
 	//Balon
-	model = glm::translate(tmp, glm::vec3(-2.0f, 1.0f, 0.0f));
+	model = glm::translate(tmp, glm::vec3(2.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
 	shader.setMat4("model", model);
 	balon.Draw(shader);
@@ -1419,7 +1466,7 @@ int main()
 	monitors = glfwGetPrimaryMonitor();
 	getResolution();
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Practica 10 2020-2", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proyecto Final. Residencial", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -1445,6 +1492,10 @@ int main()
 	myData();
 	myData2();
 	glEnable(GL_DEPTH_TEST);
+
+	//Valores iniciales del coche
+	movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+	movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
 
 	//Shaders
 	Shader modelShader("Shaders/shader_Lights.vs", "Shaders/shader_Lights.fs");
@@ -1481,17 +1532,54 @@ int main()
 	Model llantasModel = ((char *)"Models/Lambo/Wheel.obj");
 
 	//Inicializaci�n de KeyFrames
-	for (int i = 0; i < MAX_FRAMES; i++)
-	{
-		KeyFrame[i].posX = 0;
-		KeyFrame[i].posY = 0;
-		KeyFrame[i].posZ = 0;
-		KeyFrame[i].rotRodIzq = 0;
-		KeyFrame[i].giroMonito = 0;
-		KeyFrame[i].movBrazo = 0;
-		KeyFrame[i].rotCabeza = 0;
-	}
-
+	//Keyframe 0
+	KeyFrame[0].posX = 0;
+	KeyFrame[0].posY = 0;
+	KeyFrame[0].posZ = -26;
+	KeyFrame[0].rotRodIzq = 0;
+	KeyFrame[0].giroMonito = 0;
+	KeyFrame[0].movBrazo = 0;
+	KeyFrame[0].rotCabeza = 40;
+	//Keyframe 1
+	KeyFrame[1].posX = 0;
+	KeyFrame[1].posY = 0;
+	KeyFrame[1].posZ = -26;
+	KeyFrame[1].rotRodIzq = 0;
+	KeyFrame[1].giroMonito = 0;
+	KeyFrame[1].movBrazo = 0;
+	KeyFrame[1].rotCabeza = -40;
+	//Keyframe 2
+	KeyFrame[2].posX = 0;
+	KeyFrame[2].posY = 0;
+	KeyFrame[2].posZ = -6;
+	KeyFrame[2].rotRodIzq = 40;
+	KeyFrame[2].giroMonito = 0;
+	KeyFrame[2].movBrazo = 0;
+	KeyFrame[2].rotCabeza = 0;
+	//Keyframe 3
+	KeyFrame[3].posX = 0;
+	KeyFrame[3].posY = 0;
+	KeyFrame[3].posZ = 16;
+	KeyFrame[3].rotRodIzq = -40;
+	KeyFrame[3].giroMonito = 0;
+	KeyFrame[3].movBrazo = 0;
+	KeyFrame[3].rotCabeza = 0;
+	//Keyframe 4
+	KeyFrame[4].posX = 0;
+	KeyFrame[4].posY = 9;
+	KeyFrame[4].posZ = 36;
+	KeyFrame[4].rotRodIzq = 0;
+	KeyFrame[4].giroMonito = 0;
+	KeyFrame[4].movBrazo = -60;
+	KeyFrame[4].rotCabeza = 0;
+	//Keyframe 5
+	KeyFrame[5].posX = 10;
+	KeyFrame[5].posY = -6;
+	KeyFrame[5].posZ = 56;
+	KeyFrame[5].rotRodIzq = 80;
+	KeyFrame[5].giroMonito = 40;
+	KeyFrame[5].movBrazo = 60;
+	KeyFrame[5].rotCabeza = 40;
 
 	// Load textures
 	vector<const GLchar*> faces;
@@ -1572,34 +1660,50 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		rotY += 15;
 	//To Configure Model
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		posZ++;
+		posZ += 2;
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		posZ--;
+		posZ -= 2;
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-		posX--;
+		posX -= 2;
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		posX++;
+		posX += 2;
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		rotRodIzq--;
+		rotRodIzq -= 20;
 	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-		rotRodIzq++;
+		rotRodIzq += 20;
 	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-		giroMonito--;
+		giroMonito -= 20;
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-		giroMonito++;
+		giroMonito += 20;
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-		movBrazo--;
+		movBrazo -= 20;
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-		movBrazo++;
+		movBrazo += 20;
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-		posY++;
+		posY += 2;
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		posY--;
+		posY -= 2;
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
 		rotCabeza += 20;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
 		rotCabeza -= 20;
 
+	//Animación auto
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+	{
+		animacion ^= true;
+		//recorridoCoche = 1;
+
+		thetaRot = 90;
+		orienta = -thetaRot;
+
+		movAuto_x = centroX + r * cos(thetaRot * PI / 180);
+		movAuto_z = centroZ + r * sin(thetaRot * PI / 180);
+	}
+
+	//Animación Frisbee
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		animacionFrisbee ^= true;
 
 	//To play KeyFrame animation 
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
