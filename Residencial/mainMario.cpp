@@ -1,7 +1,8 @@
 /*---------------------------------------------------------*/
 /* ------------- Proyecto Final: Residencial --------------*/
 /*-----------------    2020-2   ---------------------------*/
-/*-------- Alumno: Su�rez Espinoza Mario Alberto ----------*/
+/*-------- Alumno: García Padrón César Alejandro ----------*/
+/*-------- Alumno: Suárez Espinoza Mario Alberto ----------*/
 //#define STB_IMAGE_IMPLEMENTATION
 #include <glew.h>
 #include <glfw3.h>
@@ -29,14 +30,14 @@ GLuint VBO, VAO, EBO;
 GLuint skyboxVBO, skyboxVAO;
 
 //Camera
-Camera camera(glm::vec3(70.0f, 2.0f, -10.0f));
+Camera camera(glm::vec3(0.0f, 2.0f, 10.0f));
 double	lastX = 0.0f,
-		lastY = 0.0f;
+lastY = 0.0f;
 bool firstMouse = true;
 
 //Timing
 double	deltaTime = 0.0f,
-		lastFrame = 0.0f;
+lastFrame = 0.0f;
 
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
@@ -52,57 +53,69 @@ unsigned int generateTextures(char*, bool);
 
 //For Keyboard
 float	movX = 0.0f,
-		movY = 0.0f,
-		movZ = -5.0f,
-		rotY = 0.0f;
+movY = 0.0f,
+movZ = 0.0f,
+rotY = 0.0f;
 
 //Texture
 unsigned int t_piso_m, t_piso_b, t_grass_m,
-		t_piso_parque,
-		t_c1_frontal,
-		t_c1_inferior,
-		t_c1_lateral,
-		t_c2_lateral,
-		t_c4_frontal,
-		t_c4_lateral_izq,
-		t_c5_lateral,
-		t_c5_frontal,
-		t_c6_superior,
-		t_c6_lateral,
-		t_c6_frontal,
-		t_t1_frontal,
-		t_t1_lateral,
-		t_t1_trasera,
-		t_t3_frontal,
-		t_t3_trasera,
-	t_white_C,
-	t_pared_C,
-	t_pared_ventana_C,
-	t_techo_C,
-	t_ventana_C,
-	t_letrero_C,
-	t_frente_C,
-	t_atico_C;
+t_piso_parque,
+t_c1_frontal,
+t_c1_inferior,
+t_c1_lateral,
+t_c2_lateral,
+t_c4_frontal,
+t_c4_lateral_izq,
+t_c5_lateral,
+t_c5_frontal,
+t_c6_superior,
+t_c6_lateral,
+t_c6_frontal,
+t_t1_frontal,
+t_t1_lateral,
+t_t1_trasera,
+t_t3_frontal,
+t_t3_trasera,
+t_white_C,
+t_pared_C,
+t_pared_ventana_C,
+t_techo_C,
+t_ventana_C,
+t_letrero_C,
+t_frente_C,
+t_atico_C;
+
+//Animación Carro
+float movAuto_z = 0.0f,
+movAuto_x = 0.0f,
+orienta = 0.0f;
+bool animacion = false,
+recorrido1 = true,
+recorrido2 = false,
+recorrido3 = false,
+recorrido4 = false,
+recorrido5 = false,
+recorrido6 = false;
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
-		posY = 0.0f, 
-		posZ = 0.0f, 
-		rotRodIzq = 0.0f, //Pie
-		giroMonito = 0.0f,
-		movBrazo = 0.0f,
-		rotCabeza = 0.0f;
+posY = 0.0f,
+posZ = 0.0f,
+rotRodIzq = 0.0f, //Pie
+giroMonito = 0.0f,
+movBrazo = 0.0f,
+rotCabeza = 0.0f;
 
 float	incX = 0.0f, //Variables para el c�lculo de incrementos
-		incY = 0.0f,
-		incZ = 0.0f,
-		rotInc = 0.0f,
-		giroMonitoInc = 0.0f,
-		movBrazoInc = 0.0f,
-		rotCabezaInc = 0.0f;
+incY = 0.0f,
+incZ = 0.0f,
+rotInc = 0.0f,
+giroMonitoInc = 0.0f,
+movBrazoInc = 0.0f,
+rotCabezaInc = 0.0f;
 
 #define MAX_FRAMES 9
-int i_max_steps = 190; //Cantidad m�xima de frames intermedios
+int i_max_steps = 20; //Cantidad m�xima de frames intermedios
 int i_curr_steps = 0;
 typedef struct _frame
 {
@@ -110,7 +123,7 @@ typedef struct _frame
 	float posX;		//Variable para PosicionX
 	float posY;		//Variable para PosicionY
 	float posZ;		//Variable para PosicionZ
-	float rotRodIzq; 
+	float rotRodIzq;
 	float giroMonito;
 	float movBrazo;
 	float rotCabeza;
@@ -118,7 +131,7 @@ typedef struct _frame
 }FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 0;			//introducir datos
+int FrameIndex = 6;			//introducir datos
 bool play = false;
 int playIndex = 0;
 
@@ -130,11 +143,13 @@ void saveFrame(void)
 	KeyFrame[FrameIndex].posX = posX;
 	KeyFrame[FrameIndex].posY = posY;
 	KeyFrame[FrameIndex].posZ = posZ;
+	printf("posX=%f, posY=%f, posZ=%f\n", posX,posY,posZ);
 
 	KeyFrame[FrameIndex].rotRodIzq = rotRodIzq;
 	KeyFrame[FrameIndex].giroMonito = giroMonito;
 	KeyFrame[FrameIndex].movBrazo = movBrazo;
 	KeyFrame[FrameIndex].rotCabeza = rotCabeza;
+	printf("rotRodIzq=%f, giroMonito=%f\nmovBrazo=%f, rotCabeza=%f\n", rotRodIzq, giroMonito, movBrazo, rotCabeza);
 
 	FrameIndex++;
 }
@@ -183,7 +198,7 @@ unsigned int generateTextures(const char* filename, bool alfa)
 	// load image, create texture and generate mipmaps
 	int width, height, nrChannels;
 	//stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-	
+
 	unsigned char *data = stbi_load(filename, &width, &height, &nrChannels, 0);
 	if (data)
 	{
@@ -216,7 +231,7 @@ void getResolution()
 }
 
 void LoadTextures()
-{	
+{
 	t_piso_parque = generateTextures("Texturas/pisoParque2.jpg", 0);
 	t_piso_m = generateTextures("Texturas/piso_m.jpg", 0);
 	t_piso_b = generateTextures("Texturas/concreto_m.jpg", 0);
@@ -251,7 +266,7 @@ void LoadTextures()
 }
 
 void myData()
-{	
+{
 	float vertices[] = {
 		// positions          // normals           // texture coords
 
@@ -305,202 +320,202 @@ void myData()
 		-0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V3
 
 
-		//techo, indice=36
-		-0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
-		0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
-		0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
+															   //techo, indice=36
+															   -0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
+															   0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
+															   0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
 
-		-0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
-		0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
-		0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
+															   -0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
+															   0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
+															   0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
 
-		0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
-		0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
-		0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
+															   0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
+															   0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
+															   0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
 
-		0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
-		0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
-		0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
+															   0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
+															   0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
+															   0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
 
-		-0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
-		-0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
-		0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+															   -0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
+															   -0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
+															   0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
 
-		-0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
-		0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
-		0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
+															   -0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
+															   0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+															   0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
 
-		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
-		0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
-		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+															   0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
+															   0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
+															   -0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
 
-		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
-		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
-		-0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
-
-
-		//Piso, índice= 60
-		-0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		 0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		 0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-		-0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
-
-		//Pentagono Pasto, índice= 64
-		-0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		-0.5f,	0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-		-0.5f,  0.0f,	0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		0.2f,  0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
-
-		//70
-		//Cordenadas 			Normales 				Texturas
-		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// V0 A Cara frontal
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-		0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
-
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	// E Cara trasera
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
-		0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// H
-
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Cara Abajo
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// F
-
-		-0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// C Cara Arriba
-		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-		0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
-
-		-0.5f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// A Cara Izquierda
-		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-		-0.5f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// G
-
-		0.5f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// B Cara Derecha
-		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
-		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
-		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-		0.5f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// H  35
-
-		//Triángulo
-		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.1f,	//V36 A Cara delatera
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.1f,	// B
-		0.0f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.5f,	0.95f,	// C
-
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.1f,	// D Cara trasera
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.1f,	// E
-		0.0f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.5f,	0.95f,	// F
-
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// Cara Baja
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-
-		-0.5f,	-0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// A Cara izquierda
-		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D
-		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D 
-		0.0f,	0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F
-
-		0.5f,	-0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// B Cara derecha
-		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E
-		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
-		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E 
-		0.0f,	0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F 24
+															   0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
+															   -0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+															   -0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
 
 
+																													   //Piso, índice= 60
+																													   -0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+																													   0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+																													   0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
+																													   -0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
 
-		//Ventana
-		-0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// A 40 Cuadrado principal
-		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+																													   //Pentagono Pasto, índice= 64
+																													   -0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+																													   0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+																													   -0.5f,	0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
+																													   -0.5f,  0.0f,	0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
+																													   0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
+																													   0.2f,  0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
 
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// C Pentágono
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	.0f,	0.0f,	// D
-		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// D
-		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
-		0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// F
+																													   //70
+																													   //Cordenadas 			Normales 				Texturas
+																													   -0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// V0 A Cara frontal
+																													   0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+																													   -0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+																													   0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+																													   -0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+																													   0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+
+																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	// E Cara trasera
+																													   0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
+																													   -0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
+																													   0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
+																													   -0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// G
+																													   0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// H
+
+																													   -0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Cara Abajo
+																													   0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
+																													   0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+																													   -0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// E
+																													   0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// F
+
+																													   -0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// C Cara Arriba
+																													   0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
+																													   -0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+																													   0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
+																													   -0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+																													   0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
+
+																													   -0.5f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// A Cara Izquierda
+																													   -0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
+																													   -0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
+																													   -0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// C
+																													   -0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
+																													   -0.5f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// G
+
+																													   0.5f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// B Cara Derecha
+																													   0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
+																													   0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
+																													   0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// D
+																													   0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
+																													   0.5f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// H  35
+
+																																														//Triángulo
+																																														-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.1f,	//V36 A Cara delatera
+																																														0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.1f,	// B
+																																														0.0f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.5f,	0.95f,	// C
+
+																																														-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.1f,	// D Cara trasera
+																																														0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.1f,	// E
+																																														0.0f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.5f,	0.95f,	// F
+
+																																														-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// Cara Baja
+																																														0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+																																														-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+																																														0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+																																														-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+																																														0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+
+																																														-0.5f,	-0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// A Cara izquierda
+																																														0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+																																														-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D
+																																														0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+																																														-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D 
+																																														0.0f,	0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F
+
+																																														0.5f,	-0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// B Cara derecha
+																																														0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+																																														0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E
+																																														0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	1.0f,	// C
+																																														0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E 
+																																														0.0f,	0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	1.0f,	// F 24
 
 
-		-0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  Atrás
-		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
-		0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
+																																																														//Ventana
+																																																														-0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// A 40 Cuadrado principal
+																																																														0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+																																																														0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
+																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// C
+																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// D
+
+																																																														-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// C Pentágono
+																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	.0f,	0.0f,	// D
+																																																														-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
+																																																														0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// D
+																																																														-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	1.0f,	// E
+																																																														0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	1.0f,	// F
 
 
-		-0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// E Arriba
-		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
-		0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
+																																																														-0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  Atrás
+																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-		0.25f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F  Lado derecho
-		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
-		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// I
+																																																														-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  
+																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+																																																														0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
+																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	1.0f,	// 
+																																																														0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	1.0f,	// 
 
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// D
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// J
 
-		-0.25f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E  Lado izquierdo
-		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
-		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// K
+																																																														-0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// E Arriba
+																																																														0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
+																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+																																																														0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
+																																																														-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	1.0f,	// G
+																																																														0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	1.0f,	// H
 
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// C Lado Izquierdo
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
-		-0.35f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// L
+																																																														0.25f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F  Lado derecho
+																																																														0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
+																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
+																																																														0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
+																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// D
+																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// I
 
-		-0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Abajo
-		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
-		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
-		-0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// L  48
+																																																														0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// D
+																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
+																																																														0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
+																																																														0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
+																																																														0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// B
+																																																														0.35f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// J
+
+																																																														-0.25f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E  Lado izquierdo
+																																																														-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
+																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
+																																																														-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
+																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// C
+																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// K
+
+																																																														-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// C Lado Izquierdo
+																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
+																																																														-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
+																																																														-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
+																																																														-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	1.0f,	// A
+																																																														-0.35f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	1.0f,	// L
+
+																																																														-0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Abajo
+																																																														0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
+																																																														0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
+																																																														0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	1.0f,	// J
+																																																														-0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	1.0f,	// L  48
 
 
 	};
@@ -508,7 +523,7 @@ void myData()
 		0, 1, 3, // first triangle
 		1, 2, 3  // second triangle
 	};
-	
+
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -633,12 +648,16 @@ void animate(void)
 		}
 
 	}
-	
+
 }
 
-void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
-				Model edificio6, Model edificio7, Model tree1, Model tree2, 
-				Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4, Model farola )
+void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
+	Model edificio6, Model edificio7, Model tree1, Model tree2,
+	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
+	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
+	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
+	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
+	Model carro, Model llantas)
 {
 	shader.use();
 
@@ -669,7 +688,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 	// create transformations and Projection
 	glm::mat4 tmp = glm::mat4(1.0f);
-	glm::mat4 origin,temp = glm::mat4(1.0f); //Pivotes casa de rick
+	glm::mat4 origin, temp = glm::mat4(1.0f); //Pivotes casa de rick
 	glm::mat4 model = glm::mat4(1.0f);		// initialize Matrix, Use this matrix for individual models
 	glm::mat4 view = glm::mat4(1.0f);		//Use this matrix for ALL models
 	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
@@ -683,7 +702,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glm::mat4 temporal = glm::mat4(1.0f);
 	glm::mat4 base = glm::mat4(1.0f);	//This matrix is for Projection
 
-	//Use "projection" to include Camera
+										//Use "projection" to include Camera
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50.0f);
 	view = camera.GetViewMatrix();
 
@@ -710,12 +729,43 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 
 
+	//Carro
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)); //Mover aqui la posición incial del coche.
+	model = glm::translate(model, glm::vec3(movAuto_x, 0.0f, movAuto_z));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	tmp = model = glm::rotate(model, glm::radians(orienta), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	//carro.Draw(shader);
+
+	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, 1.29f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	//llantas.Draw(shader); //Izq delantera
+
+	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, 1.29f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("model", model);
+	//llantas.Draw(shader); //Der delantera
+
+	model = glm::translate(tmp, glm::vec3(-0.85f, 0.25f, -1.45f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("model", model);
+	//llantas.Draw(shader); //Der trasera
+
+	model = glm::translate(tmp, glm::vec3(0.85f, 0.25f, -1.45f));
+	model = glm::scale(model, glm::vec3(0.010208f, 0.010208f, 0.010208f));
+	shader.setMat4("model", model);
+	//llantas.Draw(shader); //Izq trase
 
 
-	/*
+
+
 
 	//Sector A
-	sectorA=model = glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 0.01f, -4.0f));
+	sectorA = model = glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 0.01f, -4.0f));
 	model = glm::scale(model, glm::vec3(30.0f, 1.0f, 52.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -731,67 +781,76 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio1.Draw(shader);	//
+	//edificio1.Draw(shader);	//
 
 
-	//Edificio 2
+							//Edificio 2
 	cenEdif2 = model = glm::translate(sectorA, glm::vec3(-6.0f, -0.1f, 20.0f));
 	model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio2.Draw(shader);	//
+	//edificio2.Draw(shader);	//
 
-	//Edificio 3
+							//Edificio 3
 	cenEdif3 = model = glm::translate(sectorA, glm::vec3(-8.0f, 0.95f, 3.0f));
 	model = glm::scale(model, glm::vec3(1.6f, 1.6f, 1.6f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio3.Draw(shader);	//
+	//edificio3.Draw(shader);	//
 
-	//Edificio 4
+							//Edificio 4
 	cenEdif4 = model = glm::translate(sectorA, glm::vec3(39.0f, 30.5f, 35.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio4.Draw(shader);	//
+	//edificio4.Draw(shader);	//
 
 
-	//Farola
+							//Farola
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, 11.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, 3.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -5.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -13.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -21.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -29.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
-	
-	
+	//farola.Draw(shader);
 
+
+	/*
+	cenEdif4 = glm::translate(sectorC, glm::vec3(-15.0f, 0.1f, 11.0f));
+	for (int i = 1; i <= 7; i++) {
+	model = glm::translate(cenEdif4, glm::vec3(0.0f, 0.01f,
+	7.0f * (float)pow(-1.0f, (float)i)));
+	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+	shader.setMat4("model", model);
+	//farola.Draw(shader);
+	}
+	*/
 
 	//Casa
-	temporal=cenCasa =model= glm::translate(sectorC, glm::vec3(-30.0f, 1.76f, -27.0f));
+	temporal = cenCasa = model = glm::translate(sectorC, glm::vec3(-30.0f, 1.76f, -27.0f));
 	model = glm::scale(temporal, glm::vec3(5.0f, 3.5f, 5.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -814,8 +873,8 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindTexture(GL_TEXTURE_2D, t_techo_C);
 	glDrawArrays(GL_TRIANGLES, 112, 18); //Triangulo
 
-	//Ático
-	//Cuerpo
+										 //Ático
+										 //Cuerpo
 	model = glm::rotate(temporal, glm::radians(90.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	temporal = model = glm::translate(model, glm::vec3(0.0f, 0.0f, -0.7f));
@@ -825,8 +884,8 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glDrawArrays(GL_TRIANGLES, 76, 6); //Cubo
 	glBindTexture(GL_TEXTURE_2D, t_pared_C);
 	glDrawArrays(GL_TRIANGLES, 82, 24); //Cubo
-	
-	//Teja
+
+										//Teja
 	model = glm::translate(temporal, glm::vec3(0.0f, 1.0f, -0.15f));
 	model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.7f));
 	shader.setMat4("model", model);
@@ -837,7 +896,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindTexture(GL_TEXTURE_2D, t_techo_C);
 	glDrawArrays(GL_TRIANGLES, 112, 18); //Triangulo
 
-	//Ventana
+										 //Ventana
 	model = glm::rotate(cenCasa, glm::radians(90.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	temporal = model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.725f));
@@ -845,30 +904,30 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_ventana_C);
 	glDrawArrays(GL_TRIANGLES, 130, 60); //Cubo
-	
 
-	//Entrada
+
+										 //Entrada
 	temporal = model = glm::translate(cenCasa, glm::vec3(1.5f, -1.6f, 3.5f));
 	model = glm::scale(model, glm::vec3(2.0f, 0.3f, 2.0f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-	//Barrote izquierdo
+										//Barrote izquierdo
 	model = glm::translate(temporal, glm::vec3(-0.9f, 1.5f, 0.9f));
 	model = glm::scale(model, glm::vec3(0.2f, 2.7f, 0.2f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-	//Barrote derecho
+										//Barrote derecho
 	model = glm::translate(temporal, glm::vec3(0.9f, 1.5f, 0.9f));
 	model = glm::scale(model, glm::vec3(0.2f, 2.7f, 0.2f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-	//Techito de la puerta
+										//Techito de la puerta
 	model = glm::rotate(temporal, glm::radians(90.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::translate(model, glm::vec3(1.0f, 3.1f, 0.0f));
@@ -888,7 +947,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 
 	//Sector C
-	sectorC=model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.01f, 11.0f));
+	sectorC = model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.01f, 11.0f));
 	model = glm::scale(model, glm::vec3(14.0f, 1.0f, 38.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -897,7 +956,14 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
+	//Fuente
+	model = sectorC;
+	shader.setMat4("model", model);
+	fuente.Draw(shader);
+
+	//Pasto Sur
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, 12.0f));
+	tmp = model;
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
@@ -908,7 +974,30 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	//glDrawArrays(GL_TRIANGLES, 64, 6);
 	glBindVertexArray(0);
 
+	//Perro
+	model = tmp;
+	model = glm::scale(model, glm::vec3(0.02762f, 0.02762f, 0.02762f));
+	shader.setMat4("model", model);
+	perro.Draw(shader);
+
+	//Frisbee
+	model = glm::translate(tmp, glm::vec3(2.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.015f, 0.015f, 0.015f));
+	shader.setMat4("model", model);
+	frisbee.Draw(shader);
+
+	//Balon
+	model = glm::translate(tmp, glm::vec3(-2.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
+	shader.setMat4("model", model);
+	balon.Draw(shader);
+
+	//
+
+	//Pasto Norte
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, -12.0f));
+	tmp = model;
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
@@ -918,70 +1007,115 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glDrawArrays(GL_QUADS, 60, 4);
 	//glDrawArrays(GL_TRIANGLES, 64, 6);
 	glBindVertexArray(0);
+
+
+	//Lego Leia
+	model = tmp;
+	model = glm::scale(model, glm::vec3(0.046187f, 0.046187f, 0.046187f));
+
+	//Cuerpo Leia
+	model = glm::translate(model, glm::vec3(0.51f, 10.491f, -0.782f));
+	model = glm::translate(model, glm::vec3(posX, posY, posZ));
+	tmp = model = glm::rotate(model, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0));
+	shader.setMat4("model", model);
+	cuerpoLeia.Draw(shader);
+
+	//Pierna Der Leia
+	model = glm::translate(tmp, glm::vec3(-3.539f, 0.035f, 0.027f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
+	model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	piernaDerLeia.Draw(shader);
+
+	//Pierna Izq Leia
+	model = glm::translate(tmp, glm::vec3(3.642f, 0.06f, 0.001f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	piernaIzqLeia.Draw(shader);
+
+	//Brazo derecho Leia
+	model = glm::translate(tmp, glm::vec3(-5.667f, 12.835f, 0.197f));
+	model = glm::rotate(model, glm::radians(-movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	brazoDerLeia.Draw(shader);
+
+	//Brazo izquierdo Leia
+	model = glm::translate(tmp, glm::vec3(5.598f, 12.291f, -0.498f));
+	model = glm::rotate(model, glm::radians(movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	brazoIzqLeia.Draw(shader);
+
+	//Cabeza Leia
+	model = glm::translate(tmp, glm::vec3(0.237f, 16.214f, 0.016f));
+	model = glm::rotate(model, glm::radians(rotCabeza), glm::vec3(0.0f, 1.0f, 0.0));
+	shader.setMat4("model", model);
+	cabezaLeia.Draw(shader);
+
 
 	//Faros izquierdos
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 17.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, -17.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, -7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 	//Faros derechos
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(5.0f, 0.01f, 17.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(5.0f, 0.01f, -17.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(5.0f, 0.01f, -7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 
 	//�rbol 1
 	model = glm::translate(sectorC, glm::vec3(4.0f, 0.01f, 16.0f));
 	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 	shader.setMat4("model", model);
-	tree1.Draw(shader);
+	//tree1.Draw(shader);
 
 	//�rbol 2
 	model = glm::translate(sectorC, glm::vec3(4.0f, 0.01f, -16.0f));
 	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 	shader.setMat4("model", model);
-	tree2.Draw(shader);
+	//tree2.Draw(shader);
 
 	//�rbol 3
 	model = glm::translate(sectorC, glm::vec3(-4.0f, 0.01f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 	shader.setMat4("model", model);
-	//tree3.Draw(shader);
-	*/
+	////tree3.Draw(shader);
+
 
 
 
@@ -1002,16 +1136,16 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 	//Edificio 5
 	model = glm::translate(tmp, glm::vec3(-9.5f, 0.0f, -1.0f));
-	model = glm::rotate(model,glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
 	shader.setMat4("model", model);
-	edificio5.Draw(shader);
+	//edificio5.Draw(shader);
 
 	//Casa de rick
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
-	origin = glm::translate(tmp, glm::vec3(8.0f, 0.8f, 0.0f));
-	origin = glm::scale(origin, glm::vec3(0.4f, 0.4f, 0.4f));
+	origin = glm::translate(tmp, glm::vec3(8.0f, 1.0f, 0.0f));
+	origin = glm::scale(origin, glm::vec3(0.5f, 0.5f, 0.5f));
 	model = glm::scale(origin, glm::vec3(6.0f, 4.0f, 10.0f));
 	shader.setMat4("model", model);
 
@@ -1023,9 +1157,9 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
 	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
 	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
-	glDrawArrays(GL_TRIANGLES, 24, 6); //Superior 
+	glDrawArrays(GL_TRIANGLES, 24, 6); //Superior
 	glDrawArrays(GL_TRIANGLES, 30, 6); //Inferior
-	
+
 	model = glm::translate(origin, glm::vec3(0.0f, 3.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(7.0f, 3.0f, 10.0f));
 	shader.setMat4("model", model);
@@ -1082,7 +1216,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	temp = model;
 	model = glm::scale(model, glm::vec3(6.0f, 4.0f, 5.0f));
 	shader.setMat4("model", model);
-	
+
 	//Cubo 3
 	//glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
 	//glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
@@ -1097,7 +1231,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::translate(temp, glm::vec3(0.0f, 0.0f, 5.5f));
 	model = glm::scale(model, glm::vec3(6.0f, 4.0f, 6.0f));
 	shader.setMat4("model", model);
-	
+
 	//Cubo 4
 	glBindTexture(GL_TEXTURE_2D, t_c4_frontal);
 	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
@@ -1113,7 +1247,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::translate(temp, glm::vec3(0.0f, 2.5f, 5.5f));
 	model = glm::scale(model, glm::vec3(6.5f, 1.0f, 6.0f));
 	shader.setMat4("model", model);
-	
+
 	//Cubo 6
 	glBindTexture(GL_TEXTURE_2D, t_c6_frontal);
 	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
@@ -1129,7 +1263,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	temp = model;
 	model = glm::scale(model, glm::vec3(6.0f, 3.0f, 5.0f));
 	shader.setMat4("model", model);
-	
+
 	//Cubo 5
 	glBindTexture(GL_TEXTURE_2D, t_c5_frontal);
 	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
@@ -1144,7 +1278,7 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::translate(temp, glm::vec3(0.0f, 2.1666f, 0.0f));
 	model = glm::scale(model, glm::vec3(7.0f, 2.0f, 5.0f));
 	shader.setMat4("model", model);
-	
+
 	//Techo 3
 	glBindTexture(GL_TEXTURE_2D, t_t3_frontal);
 	glDrawArrays(GL_TRIANGLES, 36, 3); //Frontal
@@ -1155,9 +1289,16 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glDrawArrays(GL_TRIANGLES, 48, 6); //Lateral Derecha
 	glBindTexture(GL_TEXTURE_2D, t_c6_superior);
 	glDrawArrays(GL_TRIANGLES, 54, 6); //Inferior
-	
+
 	glBindVertexArray(0);
-	
+
+	//Rick Sánchez
+	model = glm::translate(tmp, glm::vec3(8.0f, 0.0f, 5.0f));
+	model = glm::scale(model, glm::vec3(0.0054603f, 0.0054603f, 0.0054603f));
+	shader.setMat4("model", model);
+	//rick.Draw(shader);
+
+
 	//Sector D
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
 	tmp = model;
@@ -1174,15 +1315,15 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.001112f, 0.001112f, 0.001112f));
 	shader.setMat4("model", model);
-	edificio6.Draw(shader);
+	//edificio6.Draw(shader);
 
 	//Edificio 7
 	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, 9.0f));
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	edificio7.Draw(shader);
-	
+	//edificio7.Draw(shader);
+
 	//Pasto sector D
 	model = glm::translate(tmp, glm::vec3(7.0f, 0.01f, 0.0f));
 	tmp = model;
@@ -1195,49 +1336,44 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 	glBindVertexArray(0);
 
 	//Farola
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, 11.0f));
+	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, 11.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, 3.0f));
+	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, 3.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, -5.0f));
+	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -5.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, -13.0f));
+	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -13.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, -21.0f));
+	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -29.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	model = glm::translate(sectorC, glm::vec3(10.0f, 0.01f, -29.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//farola.Draw(shader);
 
 
 	//�rbol 1
 	model = glm::scale(tmp, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 	shader.setMat4("model", model);
-	tree1.Draw(shader);
+	//tree1.Draw(shader);
 
 	//�rbol 2
 	for (int i = 1; i <= 2; i++) {
 		model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
-			5.0f * (float) pow(-1.0f,(float)i)));
+			5.0f * (float)pow(-1.0f, (float)i)));
 		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 		shader.setMat4("model", model);
-		tree2.Draw(shader);
+		//tree2.Draw(shader);
 	}
 
 	//�rbol 3
@@ -1246,9 +1382,9 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 			10.0f * (float)pow(-1.0f, (float)i)));
 		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 		shader.setMat4("model", model);
-		tree3.Draw(shader);
+		//tree3.Draw(shader);
 	}
-	
+
 
 	// Draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
@@ -1269,33 +1405,33 @@ void display(	Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5
 
 int main()
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    /*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
+	// glfw: initialize and configure
+	// ------------------------------
+	glfwInit();
+	/*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);*/
 
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-    // glfw window creation
-    // --------------------
+														 // glfw window creation
+														 // --------------------
 	monitors = glfwGetPrimaryMonitor();
 	getResolution();
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Practica 10 2020-2", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Practica 10 2020-2", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cout << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 	glfwSetWindowPos(window, 0, 30);
-    glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, my_input);
-    glfwSetFramebufferSizeCallback(window, resize);
+	glfwSetFramebufferSizeCallback(window, resize);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
@@ -1311,21 +1447,12 @@ int main()
 	myData();
 	myData2();
 	glEnable(GL_DEPTH_TEST);
-	
+
 	//Shaders
 	Shader modelShader("Shaders/shader_Lights.vs", "Shaders/shader_Lights.fs");
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
 
 	// Load models
-	/*
-	Model botaDer = ((char *)"Models/Personaje/bota.obj");
-	Model piernaDer = ((char *)"Models/Personaje/piernader.obj");
-	Model piernaIzq = ((char *)"Models/Personaje/piernader.obj");
-	Model torso = ((char *)"Models/Personaje/torso.obj");
-	Model brazoDer = ((char *)"Models/Personaje/brazoder.obj");
-	Model brazoIzq = ((char *)"Models/Personaje/brazoizq.obj");
-	Model cabeza = ((char *)"Models/Personaje/cabeza.obj");
-	Model pisoModel = ((char *)"Models/piso/piso.obj");*/
 	Model edificio1Model = ((char *)"Models/Edificio1/OBJ/city3.obj");
 	Model edificio2Model = ((char *)"Models/Edificio2/File-Obj/Edificio7.obj");
 	Model edificio3Model = ((char *)"Models/Edificio3/building_04.obj");
@@ -1337,19 +1464,73 @@ int main()
 	Model tree2 = ((char *)"Models/Trees/Tree2/tree2.obj");
 	Model tree3 = ((char *)"Models/Trees/Tree3/tree3.obj");
 	Model farolaModel = ((char *)"Models/Farola/rv_lamp_post_3.obj");
+	Model fuente = ((char *)"Models/Fuente/fuente.obj");
+	Model balon = ((char *)"Models/Balon/balon.obj");
+	Model rick = ((char *)"Models/Rick/rick.obj");
+	Model frisbee = ((char *)"Models/Frisbee/frisbee.obj");
+	Model perro = ((char *)"Models/Perro/perro.obj");
+
+	//Lego Leia
+	Model cabezaLeia = ((char *)"Models/LegoLeia/cabezaLeia.obj");
+	Model cuerpoLeia = ((char *)"Models/LegoLeia/cuerpoLeia.obj");
+	Model brazoDerLeia = ((char *)"Models/LegoLeia/brazoDerLeia.obj");
+	Model brazoIzqLeia = ((char *)"Models/LegoLeia/brazoIzqLeia.obj");
+	Model piernaDerLeia = ((char *)"Models/LegoLeia/piernaDerLeia.obj");
+	Model piernaIzqLeia = ((char *)"Models/LegoLeia/piernaIzqLeia.obj");
+
+	//Carro
+	Model carro = ((char *)"Models/Lambo/carroseria.obj");
+	Model llantasModel = ((char *)"Models/Lambo/Wheel.obj");
 
 	//Inicializaci�n de KeyFrames
-	for (int i = 0; i < MAX_FRAMES; i++)
-	{
-		KeyFrame[i].posX = 0;
-		KeyFrame[i].posY = 0;
-		KeyFrame[i].posZ = 0;
-		KeyFrame[i].rotRodIzq = 0;
-		KeyFrame[i].giroMonito = 0;
-		KeyFrame[i].movBrazo = 0;
-		KeyFrame[i].rotCabeza = 0;
-	}
-
+	//Keyframe 0
+	KeyFrame[0].posX = 0;
+	KeyFrame[0].posY = 0;
+	KeyFrame[0].posZ = -26;
+	KeyFrame[0].rotRodIzq = 0;
+	KeyFrame[0].giroMonito = 0;
+	KeyFrame[0].movBrazo = 0;
+	KeyFrame[0].rotCabeza = 40;
+	//Keyframe 1
+	KeyFrame[1].posX = 0;
+	KeyFrame[1].posY = 0;
+	KeyFrame[1].posZ = -26;
+	KeyFrame[1].rotRodIzq = 0;
+	KeyFrame[1].giroMonito = 0;
+	KeyFrame[1].movBrazo = 0;
+	KeyFrame[1].rotCabeza = -40;
+	//Keyframe 2
+	KeyFrame[2].posX = 0;
+	KeyFrame[2].posY = 0;
+	KeyFrame[2].posZ = -6;
+	KeyFrame[2].rotRodIzq = 40;
+	KeyFrame[2].giroMonito = 0;
+	KeyFrame[2].movBrazo = 0;
+	KeyFrame[2].rotCabeza = 0;
+	//Keyframe 3
+	KeyFrame[3].posX = 0;
+	KeyFrame[3].posY = 0;
+	KeyFrame[3].posZ = 16;
+	KeyFrame[3].rotRodIzq = -40;
+	KeyFrame[3].giroMonito = 0;
+	KeyFrame[3].movBrazo = 0;
+	KeyFrame[3].rotCabeza = 0;
+	//Keyframe 4
+	KeyFrame[4].posX = 0;
+	KeyFrame[4].posY = 9;
+	KeyFrame[4].posZ = 36;
+	KeyFrame[4].rotRodIzq = 0;
+	KeyFrame[4].giroMonito = 0;
+	KeyFrame[4].movBrazo = -60;
+	KeyFrame[4].rotCabeza = 0;
+	//Keyframe 5
+	KeyFrame[5].posX = 10;
+	KeyFrame[5].posY = -6;
+	KeyFrame[5].posZ = 56;
+	KeyFrame[5].rotRodIzq = 80;
+	KeyFrame[5].giroMonito = 40;
+	KeyFrame[5].movBrazo = 60;
+	KeyFrame[5].rotCabeza = 40;
 
 	// Load textures
 	vector<const GLchar*> faces;
@@ -1365,42 +1546,45 @@ int main()
 	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	// render loop
-    // While the windows is not closed
-    while (!glfwWindowShouldClose(window))
-    {
+	// While the windows is not closed
+	while (!glfwWindowShouldClose(window))
+	{
 		// per-frame time logic
 		// --------------------
 		double currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-        // input
-        // -----
-        //my_input(window);
+		// input
+		// -----
+		//my_input(window);
 		animate();
 
-        // render
-        // Background color
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// render
+		// Background color
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//display(modelShader, ourModel, llantasModel);
-		display(modelShader, SkyBoxshader, cubemapTexture, 
-				edificio5, edificio6, edificio7,
-				tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model, edificio4Model, farolaModel);
+		display(modelShader, SkyBoxshader, cubemapTexture,
+			edificio5, edificio6, edificio7,
+			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
+			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro,
+			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
+			piernaIzqLeia, carro, llantasModel);
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		// -------------------------------------------------------------------------------
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 
-    // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
+	// glfw: terminate, clearing all previously allocated GLFW resources.
+	// ------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 
-    glfwTerminate();
-    return 0;
+	glfwTerminate();
+	return 0;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -1417,45 +1601,45 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		camera.ProcessKeyboard(LEFT, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(RIGHT, (float)deltaTime);
-	//if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-	//	camera.ProcessKeyboard(UPWARD, (float)deltaTime);
-	//if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-	//	camera.ProcessKeyboard(DOWNWARD, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+		camera.ProcessKeyboard(UPWARD, (float)deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+		camera.ProcessKeyboard(DOWNWARD, (float)deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		rotY-=15;
+		rotY -= 15;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		rotY += 15;
 	//To Configure Model
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-		posZ++;
+		posZ += 2;
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-		posZ--;
+		posZ -= 2;
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-		posX--;
+		posX -= 2;
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-		posX++;
+		posX += 2;
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-		rotRodIzq--;
+		rotRodIzq -= 20;
 	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-		rotRodIzq++;
+		rotRodIzq += 20;
 	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-		giroMonito--;
+		giroMonito -= 20;
 	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-		giroMonito++;
+		giroMonito += 20;
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-		movBrazo--;
+		movBrazo -= 20;
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-		movBrazo++;
+		movBrazo += 20;
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-		posY++;
+		posY += 2;
 	if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-		posY--;
+		posY -= 2;
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		rotCabeza+=20;
+		rotCabeza += 20;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		rotCabeza-=20;
-	
-	
+		rotCabeza -= 20;
+
+
 	//To play KeyFrame animation 
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
@@ -1489,8 +1673,8 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 // ---------------------------------------------------------------------------------------------
 void resize(GLFWwindow* window, int width, int height)
 {
-    // Set the Viewport to the size of the created window
-    glViewport(0, 0, width, height);
+	// Set the Viewport to the size of the created window
+	glViewport(0, 0, width, height);
 }
 
 // glfw: whenever the mouse moves, this callback is called
