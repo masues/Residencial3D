@@ -640,7 +640,9 @@ void animate(void)
 void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	Model edificio6, Model edificio7, Model tree1, Model tree2,
 	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
-	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro)
+	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
+	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
+	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia)
 {
 	shader.use();
 
@@ -949,6 +951,7 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 
 	//Pasto Norte
 	model = glm::translate(sectorC, glm::vec3(0.0f, 0.01f, -12.0f));
+	tmp = model;
 	model = glm::scale(model, glm::vec3(10.0f, 1.0f, 10.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
@@ -958,6 +961,51 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	glDrawArrays(GL_QUADS, 60, 4);
 	//glDrawArrays(GL_TRIANGLES, 64, 6);
 	glBindVertexArray(0);
+
+
+	//Lego Leia
+	model = tmp;
+	model = glm::scale(model, glm::vec3(0.046187f, 0.046187f, 0.046187f));
+
+	//Cuerpo Leia
+	model = glm::translate(model, glm::vec3(0.51f, 10.491f, -0.782f));
+	model = glm::translate(model, glm::vec3(posX, posY, posZ));
+	tmp = model = glm::rotate(model, glm::radians(giroMonito), glm::vec3(0.0f, 1.0f, 0.0));
+	shader.setMat4("model", model);
+	cuerpoLeia.Draw(shader);
+
+	//Pierna Der Leia
+	model = glm::translate(tmp, glm::vec3(-3.539f, 0.035f, 0.027f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
+	model = glm::rotate(model, glm::radians(-rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	piernaDerLeia.Draw(shader);
+
+	//Pierna Izq Leia
+	model = glm::translate(tmp, glm::vec3(3.642f, 0.06f, 0.001f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rotRodIzq), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	piernaIzqLeia.Draw(shader);
+
+	//Brazo derecho Leia
+	model = glm::translate(tmp, glm::vec3(-5.667f, 12.835f, 0.197f));
+	model = glm::rotate(model, glm::radians(-movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	brazoDerLeia.Draw(shader);
+
+	//Brazo izquierdo Leia
+	model = glm::translate(tmp, glm::vec3(5.598f, 12.291f, -0.498f));
+	model = glm::rotate(model, glm::radians(movBrazo), glm::vec3(1.0f, 0.0f, 0.0f));
+	shader.setMat4("model", model);
+	brazoIzqLeia.Draw(shader);
+
+	//Cabeza Leia
+	model = glm::translate(tmp, glm::vec3(0.237f, 16.214f, 0.016f));
+	model = glm::rotate(model, glm::radians(rotCabeza), glm::vec3(0.0f, 1.0f, 0.0));
+	shader.setMat4("model", model);
+	cabezaLeia.Draw(shader);
+
 
 	//Faros izquierdos
 	//Farola
@@ -1376,6 +1424,14 @@ int main()
 	Model frisbee = ((char *)"Models/Frisbee/frisbee.obj");
 	Model perro = ((char *)"Models/Perro/perro.obj");
 
+	//Lego Leia
+	Model cabezaLeia = ((char *)"Models/LegoLeia/cabezaLeia.obj");
+	Model cuerpoLeia = ((char *)"Models/LegoLeia/cuerpoLeia.obj");
+	Model brazoDerLeia = ((char *)"Models/LegoLeia/brazoDerLeia.obj");
+	Model brazoIzqLeia = ((char *)"Models/LegoLeia/brazoIzqLeia.obj");
+	Model piernaDerLeia = ((char *)"Models/LegoLeia/piernaDerLeia.obj");
+	Model piernaIzqLeia = ((char *)"Models/LegoLeia/piernaIzqLeia.obj");
+
 	//Inicializaci�n de KeyFrames
 	for (int i = 0; i < MAX_FRAMES; i++)
 	{
@@ -1425,7 +1481,9 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture,
 			edificio5, edificio6, edificio7,
 			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
-			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro);
+			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro,
+			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
+			piernaIzqLeia);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
