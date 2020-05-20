@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="esfera.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Texture.h" />
@@ -154,6 +155,7 @@
     <None Include="shaders\SkyBox.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="esfera.cpp" />
     <ClCompile Include="main_residencial.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

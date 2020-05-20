@@ -27,6 +27,9 @@
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="esfera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\modelLoading.fs">
@@ -92,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main_residencial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="esfera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

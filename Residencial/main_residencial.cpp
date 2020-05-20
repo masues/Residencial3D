@@ -710,7 +710,7 @@ void animate(void)
 	}
 }
 
-void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
+void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint skybox, Model edificio5,
 	Model edificio6, Model edificio7, Model tree1, Model tree2,
 	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
 	Model farola,Model focoFarola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
@@ -772,10 +772,17 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 
 	// pass them to the shaders
 	shader.setMat4("model", model);
+	
 	shader.setMat4("view", view);
 	// note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 	shader.setMat4("projection", projection);
 
+	fragmentShader.use();
+	fragmentShader.setMat4("model", model);
+	fragmentShader.setMat4("view", view);
+	fragmentShader.setMat4("projection", projection);
+
+	shader.use();
 
 	//Piso
 	model = glm::scale(glm::mat4(1.0f), glm::vec3(80.0f, 1.0f, 60.0f));
@@ -1111,9 +1118,14 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 	shader.setMat4("model", model);
+	fragmentShader.use();
+	fragmentShader.setMat4("model", model);
+	
 	glBindVertexArray(VAO);
+	fragmentShader.setVec3("aColor",glm::vec3(1.0f,1.0f,1.0f));
 	my_sphere.render();
 	glBindVertexArray(0);
+	shader.use();
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
@@ -1510,6 +1522,7 @@ int main()
 
 	//Shaders
 	Shader modelShader("Shaders/shader_Lights.vs", "Shaders/shader_Lights.fs");
+	Shader fragmentShader("Shaders/shader_projection.vs", "Shaders/shader_projection.fs");
 	Shader SkyBoxshader("Shaders/SkyBox.vs", "Shaders/SkyBox.frag");
 
 	// Load models
@@ -1626,7 +1639,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//display(modelShader, ourModel, llantasModel);
-		display(modelShader, SkyBoxshader, cubemapTexture,
+		display(modelShader, SkyBoxshader, fragmentShader, cubemapTexture,
 			edificio5, edificio6, edificio7,
 			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
 			edificio4Model, farolaModel, focoFarola,fuente, balon, rick, frisbee, perro,
