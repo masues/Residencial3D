@@ -11,6 +11,9 @@
 #include "camera.h"
 #include "Model.h"
 #include "Texture.h"
+#include "esfera.h"
+
+Esfera my_sphere(1.0f);
 
 // Other Libs
 #include "SOIL2/SOIL2.h"
@@ -710,7 +713,7 @@ void animate(void)
 void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	Model edificio6, Model edificio7, Model tree1, Model tree2,
 	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
-	Model farola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
+	Model farola,Model focoFarola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
 	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
 	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
 	Model carro, Model llantas)
@@ -721,12 +724,12 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	shader.setVec3("viewPos", camera.Position);
 	shader.setVec3("dirLight.direction", lightDirection);
 	shader.setVec3("dirLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	shader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	shader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+	shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 
-	shader.setVec3("pointLight[0].position", lightPosition);
+	shader.setVec3("pointLight[0].position", glm::vec3(0,2.66,28));
 	shader.setVec3("pointLight[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	shader.setVec3("pointLight[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+	shader.setVec3("pointLight[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 	shader.setVec3("pointLight[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	shader.setFloat("pointLight[0].constant", 1.0f);
 	shader.setFloat("pointLight[0].linear", 0.009f);
@@ -1104,6 +1107,13 @@ void display(Shader shader, Shader skyboxShader, GLuint skybox, Model edificio5,
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
 	farola.Draw(shader);
+
+	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+	model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	my_sphere.render();
+	glBindVertexArray(0);
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
@@ -1492,6 +1502,7 @@ int main()
 	myData();
 	myData2();
 	glEnable(GL_DEPTH_TEST);
+	my_sphere.init();
 
 	//Valores iniciales del coche
 	movAuto_x = centroX + r * cos(thetaRot * PI / 180);
@@ -1512,7 +1523,8 @@ int main()
 	Model tree1 = ((char *)"Models/Trees/Tree1/tree1.obj");
 	Model tree2 = ((char *)"Models/Trees/Tree2/tree2.obj");
 	Model tree3 = ((char *)"Models/Trees/Tree3/tree3.obj");
-	Model farolaModel = ((char *)"Models/Farola/rv_lamp_post_3.obj");
+	Model farolaModel = ((char *)"Models/Farola/farola.obj");
+	Model focoFarola = ((char *)"Models/Farola/farola.obj");
 	Model fuente = ((char *)"Models/Fuente/fuente.obj");
 	Model balon = ((char *)"Models/Balon/balon.obj");
 	Model rick = ((char *)"Models/Rick/rick.obj");
@@ -1617,7 +1629,7 @@ int main()
 		display(modelShader, SkyBoxshader, cubemapTexture,
 			edificio5, edificio6, edificio7,
 			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
-			edificio4Model, farolaModel, fuente, balon, rick, frisbee, perro,
+			edificio4Model, farolaModel, focoFarola,fuente, balon, rick, frisbee, perro,
 			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
 			piernaIzqLeia, carro, llantasModel);
 
