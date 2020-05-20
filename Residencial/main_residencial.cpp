@@ -1115,16 +1115,13 @@ void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint s
 	shader.setMat4("model", model);
 	farola.Draw(shader);
 
+	//Foco de farola
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
-	shader.setMat4("model", model);
 	fragmentShader.use();
 	fragmentShader.setMat4("model", model);
-	
-	glBindVertexArray(VAO);
 	fragmentShader.setVec3("aColor",glm::vec3(1.0f,1.0f,1.0f));
-	my_sphere.render();
-	glBindVertexArray(0);
+	focoFarola.Draw(fragmentShader);
+
 	shader.use();
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
@@ -1537,7 +1534,7 @@ int main()
 	Model tree2 = ((char *)"Models/Trees/Tree2/tree2.obj");
 	Model tree3 = ((char *)"Models/Trees/Tree3/tree3.obj");
 	Model farolaModel = ((char *)"Models/Farola/farola.obj");
-	Model focoFarola = ((char *)"Models/Farola/farola.obj");
+	Model focoFarola = ((char *)"Models/Farola/foco.obj");
 	Model fuente = ((char *)"Models/Fuente/fuente.obj");
 	Model balon = ((char *)"Models/Balon/balon.obj");
 	Model rick = ((char *)"Models/Rick/rick.obj");
