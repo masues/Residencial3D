@@ -45,6 +45,7 @@ lastFrame = 0.0f;
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
 glm::vec3 lightDirection(-0.2f, -1.0f, -1.0f);
+bool luces = true;//Bandera para encender las luces
 
 void myData(void);
 void myData2(void);
@@ -727,10 +728,17 @@ void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint s
 	shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
 	shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 
-	//shader.setVec3("pointLight[0].position", glm::vec3(0,2.66,28));
-	shader.setVec3("pointLight[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	shader.setVec3("pointLight[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	shader.setVec3("pointLight[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	if (luces){
+		shader.setVec3("pointLight[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3("pointLight[0].ambient", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3("pointLight[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+	}
+	else{
+		shader.setVec3("pointLight[0].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+		shader.setVec3("pointLight[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+		shader.setVec3("pointLight[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+	}
 	shader.setFloat("pointLight[0].constant", 1.0f);
 	shader.setFloat("pointLight[0].linear", 0.009f);
 	shader.setFloat("pointLight[0].quadratic", 0.0032f);
@@ -1119,8 +1127,11 @@ void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint s
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[0].position", glm::vec3(model * glm::vec4(1.0f)));
 	fragmentShader.use();
+	if(luces)
+		fragmentShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	else
+		fragmentShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
 	fragmentShader.setMat4("model", model);
-	fragmentShader.setVec3("aColor",glm::vec3(1.0f,1.0f,1.0f));
 	focoFarola.Draw(fragmentShader);
 	shader.use();
 	
@@ -1681,7 +1692,12 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		rotY -= 15;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		rotY += 15;
-	//To Configure Model
+
+	//Para encender luces
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		luces ^= true;
+
+	//Para manipular a Lego Leia
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
 		posZ += 2;
 	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
