@@ -727,7 +727,7 @@ void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint s
 	shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
 	shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 
-	shader.setVec3("pointLight[0].position", glm::vec3(0,2.66,28));
+	//shader.setVec3("pointLight[0].position", glm::vec3(0,2.66,28));
 	shader.setVec3("pointLight[0].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 	shader.setVec3("pointLight[0].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 	shader.setVec3("pointLight[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -1117,12 +1117,13 @@ void display(Shader shader, Shader skyboxShader, Shader fragmentShader, GLuint s
 
 	//Foco de farola
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+	shader.setVec3("pointLight[0].position", glm::vec3(model * glm::vec4(1.0f)));
 	fragmentShader.use();
 	fragmentShader.setMat4("model", model);
 	fragmentShader.setVec3("aColor",glm::vec3(1.0f,1.0f,1.0f));
 	focoFarola.Draw(fragmentShader);
-
 	shader.use();
+	
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
