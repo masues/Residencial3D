@@ -14,11 +14,10 @@ using namespace std;
 #include "Model.h"
 #include "Texture.h"
 
-
 // Other Libs
 #include "SOIL2/SOIL2.h"
 
-void resize(GLFWwindow* window, int width, int height);
+void resize(GLFWwindow *window, int width, int height);
 void my_input(GLFWwindow *window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
@@ -34,18 +33,18 @@ GLuint skyboxVBO, skyboxVAO;
 
 //Camera
 Camera camera(glm::vec3(0.0f, 2.0f, 10.0f));
-double	lastX = 0.0f,
-lastY = 0.0f;
+double lastX = 0.0f,
+			 lastY = 0.0f;
 bool firstMouse = true;
 
 //Timing
-double	deltaTime = 0.0f,
-lastFrame = 0.0f;
+double deltaTime = 0.0f,
+			 lastFrame = 0.0f;
 
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
-glm::vec3 lightDirection(-0.2f, -1.0f, -1.0f);
-bool luces = false;//Bandera para encender las luces
+glm::vec3 lightDirection(0.5f, -1.0f, -1.0f);
+bool luces = false; //Bandera para encender las luces
 bool sol = true;
 
 void myData(void);
@@ -54,13 +53,13 @@ void display(Shader, Shader, Model, Model);
 void getResolution(void);
 void animate(void);
 void LoadTextures(void);
-unsigned int generateTextures(char*, bool);
+unsigned int generateTextures(char *, bool);
 
 //For Keyboard
-float	movX = 0.0f,
-movY = 0.0f,
-movZ = -5.0f,
-rotY = 0.0f;
+float movX = 0.0f,
+			movY = 0.0f,
+			movZ = -5.0f,
+			rotY = 0.0f;
 
 //Texture
 unsigned int t_piso_m, t_piso_b, t_grass_m,
@@ -115,7 +114,7 @@ bool regresoFrisbee = false;
 float movFrisbee_z = 8.7f;
 float movFrisbee_y = 0.2f;
 
-//Animación taza
+//Animación Taza
 bool animacionTaza = false;
 bool regresoTaza = false;
 float movTaza_z = 2.0f;
@@ -123,34 +122,34 @@ float movTaza_x = 0.0f;
 float movTaza_y = 2.5f;
 int casosTaza = 0;
 
-//Animación balón
+//Animación Balón
 bool animacionBalon = false;
 bool regresoBalon = false;
-float alturaFija = 10.0f;
+float alturaFija = 8.5f;
 float movBslon_x = -11.0f;
 float movBalon_z = 0.0f;
-float movBalon_y = 10.0f;
+float movBalon_y = 8.5f;
 float contadorTiempo = 0.0f;
 float altura = alturaFija;
 float velocidad = 1.0f;
 int estadosBalon = 0;
 
 //Keyframes
-float	posX = 0.0f, //variables de manipulaci�n del dibujo 
-posY = 0.0f,
-posZ = 0.0f,
-rotRodIzq = 0.0f, //Pie
-giroMonito = 0.0f,
-movBrazo = 0.0f,
-rotCabeza = 0.0f;
+float posX = 0.0f, //variables de manipulaci�n del dibujo
+		posY = 0.0f,
+			posZ = 0.0f,
+			rotRodIzq = 0.0f, //Pie
+		giroMonito = 0.0f,
+			movBrazo = 0.0f,
+			rotCabeza = 0.0f;
 
-float	incX = 0.0f, //Variables para el c�lculo de incrementos
-incY = 0.0f,
-incZ = 0.0f,
-rotInc = 0.0f,
-giroMonitoInc = 0.0f,
-movBrazoInc = 0.0f,
-rotCabezaInc = 0.0f;
+float incX = 0.0f, //Variables para el c�lculo de incrementos
+		incY = 0.0f,
+			incZ = 0.0f,
+			rotInc = 0.0f,
+			giroMonitoInc = 0.0f,
+			movBrazoInc = 0.0f,
+			rotCabezaInc = 0.0f;
 
 #define MAX_FRAMES 9
 int i_max_steps = 20; //Cantidad m�xima de frames intermedios
@@ -158,18 +157,18 @@ int i_curr_steps = 0;
 typedef struct _frame
 {
 	//Variables para GUARDAR Key Frames
-	float posX;		//Variable para PosicionX
-	float posY;		//Variable para PosicionY
-	float posZ;		//Variable para PosicionZ
+	float posX; //Variable para PosicionX
+	float posY; //Variable para PosicionY
+	float posZ; //Variable para PosicionZ
 	float rotRodIzq;
 	float giroMonito;
 	float movBrazo;
 	float rotCabeza;
 
-}FRAME;
+} FRAME;
 
 FRAME KeyFrame[MAX_FRAMES];
-int FrameIndex = 6;			//introducir datos
+int FrameIndex = 6; //introducir datos
 bool play = false;
 int playIndex = 0;
 
@@ -192,7 +191,6 @@ void saveFrame(void)
 	FrameIndex++;
 }
 
-
 //Sustituye lo que tiene actualmente el personaje por
 //lo guardado en el cuadro clave cero
 void resetElements(void)
@@ -205,7 +203,6 @@ void resetElements(void)
 	giroMonito = KeyFrame[0].giroMonito;
 	movBrazo = KeyFrame[0].movBrazo;
 	rotCabeza = KeyFrame[0].rotCabeza;
-
 }
 
 void interpolation(void)
@@ -221,8 +218,7 @@ void interpolation(void)
 	rotCabezaInc = (KeyFrame[playIndex + 1].rotCabeza - KeyFrame[playIndex].rotCabeza) / i_max_steps;
 }
 
-
-unsigned int generateTextures(const char* filename, bool alfa)
+unsigned int generateTextures(const char *filename, bool alfa)
 {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
@@ -258,14 +254,13 @@ unsigned int generateTextures(const char* filename, bool alfa)
 
 void getResolution()
 {
-	const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 	SCR_WIDTH = mode->width;
 	SCR_HEIGHT = (mode->height) - 80;
 
 	lastX = SCR_WIDTH / 2.0f;
 	lastY = SCR_HEIGHT / 2.0f;
-
 }
 
 void LoadTextures()
@@ -303,7 +298,6 @@ void LoadTextures()
 	t_frente_C = generateTextures("Texturas/CasaCesar/Frente.jpg", 0);
 	t_atico_C = generateTextures("Texturas/CasaCesar/Atico.jpg", 0);
 
-	//Texturas portal
 	t_portal_C = generateTextures("Texturas/portalGravity2.jpg", 0);
 	t_ceramica = generateTextures("Texturas/CeramicaBlanca.jpg", 0);
 	t_ladrillo_gris = generateTextures("Texturas/ParedLadrilloGris.jpg", 0);
@@ -315,260 +309,257 @@ void LoadTextures()
 void myData()
 {
 	float vertices[] = {
-		// positions          // normals           // texture coords
+			// positions          // normals           // texture coords
 
-		//Cubo
-		-0.5f, -0.5f, 0.5f, 	0.0f,0.0f,1.0f, 	0.0f, 0.0f,//V0 - Frontal
-		0.5f, -0.5f, 0.5f,		0.0f,0.0f,1.0f, 	1.0f, 0.0f,//V1
-		0.5f, 0.5f, 0.5f,			0.0f,0.0f,1.0f,		1.0f, -1.0f,//V5
+			//Cubo
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //V0 - Frontal
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	//V1
+			0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f,	//V5
 
-		-0.5f, -0.5f, 0.5f, 	0.0f,0.0f,1.0f,		0.0f, 0.0f,//V0
-		0.5f, 0.5f, 0.5f,			0.0f,0.0f,1.0f,		1.0f, -1.0f,//V5
-		-0.5f, 0.5f, 0.5f,		0.0f,0.0f,1.0f,		0.0f, -1.0f,//V4
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //V0
+			0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f,	//V5
+			-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, //V4
 
-		-0.5f, -0.5f, -0.5f, 	0.0f,0.0f,-1.0f,	1.0f, 0.0f,//V3 - Trasera
-		0.5f, -0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, 0.0f,//V2
-		0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, -1.0f,//V6
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, //V3 - Trasera
+			0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,	//V2
+			0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f,	//V6
 
-		-0.5f, -0.5f, -0.5f, 	0.0f,0.0f,-1.0f,	1.0f, 0.0f,//V3
-		0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	0.0f, -1.0f,//V6
-		-0.5f, 0.5f, -0.5f,	 	0.0f,0.0f,-1.0f,	1.0f, -1.0f,//V7
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, //V3
+			0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f,	//V6
+			-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f, //V7
 
-		-0.5f, -0.5f, 0.5f,	 	-1.0f,0.0f,0.0f,		1.0f, 0.0f,//V0 - Izq
-		-0.5f, -0.5f, -0.5f, 	-1.0f,0.0f,0.0f,		0.0f, 0.0f,//V3
-		-0.5f, 0.5f, -0.5f,	 	-1.0f,0.0f,0.0f,		0.0f, -1.0f,//V7
+			-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	//V0 - Izq
+			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //V3
+			-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, //V7
 
-		-0.5f, -0.5f, 0.5f, 	-1.0f,0.0f,0.0f,		1.0f, 0.0f,//V0
-		-0.5f, 0.5f, -0.5f, 	-1.0f,0.0f,0.0f,		0.0f, -1.0f,//V7
-		-0.5f, 0.5f, 0.5f,		-1.0f,0.0f,0.0f,		1.0f, -1.0f,//V4
+			-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	//V0
+			-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, //V7
+			-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f,	//V4
 
-		0.5f, -0.5f, 0.5f,		1.0f,0.0f,0.0f,	0.0f, 0.0f,//V1 - Der
-		0.5f, -0.5f, -0.5f, 	1.0f,0.0f,0.0f,	1.0f, 0.0f,//V2
-		0.5f, 0.5f, -0.5f,		1.0f,0.0f,0.0f,	1.0f, -1.0f,//V6
+			0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,	//V1 - Der
+			0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //V2
+			0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, //V6
 
-		0.5f, -0.5f, 0.5f, 		1.0f,0.0f,0.0f,	0.0f, 0.0f,//V1
-		0.5f, 0.5f, -0.5f, 		1.0f,0.0f,0.0f,	1.0f, -1.0f,//V6
-		0.5f, 0.5f, 0.5f,	 		1.0f,0.0f,0.0f,	0.0f, -1.0f,//V5
+			0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,	//V1
+			0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, //V6
+			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	//V5
 
-		-0.5f, 0.5f, 0.5f, 		0.0f,1.0f,0.0f,		0.0f, 0.0f,//V4 - Sup
-		0.5f, 0.5f, 0.5f,	 		0.0f,1.0f,0.0f, 	1.0f, 0.0f,//V5
-		0.5f, 0.5f, -0.5f, 		0.0f,1.0f,0.0f,		1.0f, -1.0f,//V6
+			-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,	//V4 - Sup
+			0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		//V5
+			0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f, //V6
 
-		-0.5f, 0.5f, 0.5f,		0.0f,1.0f,0.0f,		0.0f, 0.0f,//V4
-		0.5f, 0.5f, -0.5f,		0.0f,1.0f,0.0f,		1.0f, -1.0f,//V6
-		-0.5f, 0.5f, -0.5f, 	0.0f,1.0f,0.0f,		0.0f, -1.0f,//V7
+			-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,	 //V4
+			0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f,	 //V6
+			-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, //V7
 
-		-0.5f, -0.5f, 0.5f, 	0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V0 - Inf
-		0.5f, -0.5f, 0.5f,		0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V1
-		0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V2
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, //V0 - Inf
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, -1.0f,	//V1
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,	//V2
 
-		-0.5f, -0.5f, 0.5f,	 	0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V0
-		0.5f, -0.5f, -0.5f,	 	0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V2
-		-0.5f, -0.5f, -0.5f, 	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V3
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, //V0
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,	//V2
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, //V3
 
+			//techo, indice=36
+			-0.5f, -0.33333, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //V0 - Frontal
+			0.5f, -0.33333, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	 //V1
+			0.0f, 0.66667, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, -1.0f,	 //V2
 
-		//techo, indice=36
-		-0.5f, -0.33333, 0.5f, 	0.0f,0.0f,1.0f,				0.0f, 0.0f,//V0 - Frontal
-		0.5f, -0.33333, 0.5f,	 	0.0f,0.0f,1.0f,				1.0f, 0.0f,//V1
-		0.0f, 0.66667, 0.5f,	 	0.0f,0.0f,1.0f,				0.5f, -1.0f,//V2
+			-0.5f, -0.33333, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //V3 - Trasera
+			0.5f, -0.33333, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	 //V4
+			0.0f, 0.66667, -0.5f, 0.0f, 0.0f, -1.0f, 0.5f, -1.0f,	 //V5
 
-		-0.5f, -0.33333, -0.5f,	0.0f,0.0f,-1.0f, 			0.0f, 0.0f,//V3 - Trasera
-		0.5f, -0.33333, -0.5f, 	0.0f,0.0f,-1.0f, 			1.0f, 0.0f,//V4
-		0.0f, 0.66667, -0.5f,	 	0.0f,0.0f,-1.0f, 			0.5f, -1.0f,//V5
+			0.5f, -0.33333, 0.5f, -0.866025f, 0.5f, 0.0f, 0.0f, 0.0f,	 //V1 - Lateral izquierda
+			0.5f, -0.33333, -0.5f, -0.866025f, 0.5f, 0.0f, 1.0f, 0.0f, //V4
+			0.0f, 0.66667, -0.5f, -0.866025f, 0.5f, 0.0f, 1.0f, -1.0f, //V5
 
-		0.5f, -0.33333, 0.5f,	 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1 - Lateral izquierda
-		0.5f, -0.33333, -0.5f, 	-0.866025f,0.5f,0.0f, 1.0f, 0.0f,//V4
-		0.0f, 0.66667, -0.5f,	 	-0.866025f,0.5f,0.0f, 1.0f, -1.0f,//V5
+			0.5f, -0.33333, 0.5f, -0.866025f, 0.5f, 0.0f, 0.0f, 0.0f,	 //V1
+			0.0f, 0.66667, -0.5f, -0.866025f, 0.5f, 0.0f, 1.0f, -1.0f, //V5
+			0.0f, 0.66667, 0.5f, -0.866025f, 0.5f, 0.0f, 0.0f, -1.0f,	 //V2
 
-		0.5f, -0.33333, 0.5f, 	-0.866025f,0.5f,0.0f, 0.0f, 0.0f,//V1
-		0.0f, 0.66667, -0.5f, 	-0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V5
-		0.0f, 0.66667, 0.5f,		-0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V2
+			-0.5f, -0.33333, 0.5f, 0.866025f, 0.5f, 0.0f, 1.0f, 0.0f,	 //V0 - Lateral derecha
+			-0.5f, -0.33333, -0.5f, 0.866025f, 0.5f, 0.0f, 0.0f, 0.0f, //V3
+			0.0f, 0.66667, -0.5f, 0.866025f, 0.5f, 0.0f, 0.0f, -1.0f,	 //V5
 
-		-0.5f, -0.33333, 0.5f,	 0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0 - Lateral derecha
-		-0.5f, -0.33333, -0.5f,  0.866025f,0.5f,0.0f,	0.0f, 0.0f,//V3
-		0.0f, 0.66667, -0.5f,		 0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
+			-0.5f, -0.33333, 0.5f, 0.866025f, 0.5f, 0.0f, 1.0f, 0.0f, //V0
+			0.0f, 0.66667, -0.5f, 0.866025f, 0.5f, 0.0f, 0.0f, -1.0f, //V5
+			0.0f, 0.66667, 0.5f, 0.866025f, 0.5f, 0.0f, 1.0f, -1.0f,	//V2
 
-		-0.5f, -0.33333, 0.5f, 	0.866025f,0.5f,0.0f,	1.0f, 0.0f,//V0
-		0.0f, 0.66667, -0.5f,	 	0.866025f,0.5f,0.0f,	0.0f, -1.0f,//V5
-		0.0f, 0.66667, 0.5f,	 	0.866025f,0.5f,0.0f,	1.0f, -1.0f,//V2
+			0.5f, -0.33333, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,	 //V1 - Plano inferior
+			0.5f, -0.33333, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, -1.0f, //V4
+			-0.5f, -0.33333, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, //V3
 
-		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1 - Plano inferior
-		0.5f, -0.33333, -0.5f,	0.0f,-1.0f,0.0f,	1.0f, -1.0f,//V4
-		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
+			0.5f, -0.33333, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,	 //V1
+			-0.5f, -0.33333, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, //V3
+			-0.5f, -0.33333, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,	 //V0
 
-		0.5f, -0.33333, 0.5f,		0.0f,-1.0f,0.0f,	0.0f, -1.0f,//V1
-		-0.5f, -0.33333, -0.5f, 0.0f,-1.0f,0.0f,	1.0f, 0.0f,//V3
-		-0.5f, -0.33333, 0.5f,	0.0f,-1.0f,0.0f,	0.0f, 0.0f,//V0
+			//Piso, índice= 60
+			-0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 10.0f, 0.0f,
+			0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 10.0f, 10.0f,
+			-0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 10.0f,
 
+			//Pentagono Pasto, índice= 64
+			-0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 10.0f, 0.0f,
+			-0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 10.0f, 10.0f,
+			-0.5f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			0.5f, 0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 10.0f, 0.0f,
+			0.2f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 10.0f,
 
-		//Piso, índice= 60
-		-0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		0.5f,  0.0f, -0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-		-0.5f,  0.0f,  0.5f,  	0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
+			//70
+			//Cordenadas 			Normales 				Texturas
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // V0 A Cara frontal
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	// B
+			-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // C
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	// B
+			-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // C
+			0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f,	// D
 
-		//Pentagono Pasto, índice= 64
-		-0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		-0.5f,	0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	10.0f,  10.0f,
-		-0.5f,  0.0f,	0.5f,  	0.0f,  1.0f,  0.0f, 	0.0f,  0.0f,
-		0.5f,	0.0f,	-0.5f,  	0.0f,  1.0f,  0.0f,  	10.0f,  0.0f,
-		0.2f,  0.0f,	0.5f,  		0.0f,  1.0f,  0.0f,  	0.0f,  10.0f,
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, // E Cara trasera
+			0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	// F
+			-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, // G
+			0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	// F
+			-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, // G
+			0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f,	// H
 
-		//70
-		//Cordenadas 			Normales 				Texturas
-		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// V0 A Cara frontal
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// C
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// C
-		0.5f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	-1.0f,	// D
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,	 // A Cara Abajo
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,		 // B
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, // E
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,		 // B
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, // E
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, -1.0f,	 // F
 
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	// E Cara trasera
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// G
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// F
-		-0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// G
-		0.5f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	-1.0f,	// H
+			-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,	 // C Cara Arriba
+			0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		 // D
+			-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, // G
+			0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		 // D
+			-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, // G
+			0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f,	 // H
 
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Cara Abajo
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	-1.0f,	// E
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	-1.0f,	// E
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	-1.0f,	// F
+			-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	// A Cara Izquierda
+			-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f,	// C
+			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // E
+			-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f,	// C
+			-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // E
+			-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, // G
 
-		-0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// C Cara Arriba
-		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	-1.0f,	// G
-		0.5f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// D
-		-0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	-1.0f,	// G
-		0.5f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	-1.0f,	// H
+			0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	// B Cara Derecha
+			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f,	// D
+			0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // F
+			0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f,	// D
+			0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // F
+			0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, // H  35
 
-		-0.5f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// A Cara Izquierda
-		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-		-0.5f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E
-		-0.5f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// G
+			//Triángulo 106
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -0.1f, //V36 A Cara delatera
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -0.1f,	 // B
+			0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, -0.95f,	 // C
 
-		0.5f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// B Cara Derecha
-		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// D
-		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-		0.5f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// D
-		0.5f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F
-		0.5f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// H  35
+			-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -0.1f, // D Cara trasera
+			0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, -0.1f,	 // E
+			0.0f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.5f, -0.95f,	 // F
 
-		//Triángulo
-		-0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-0.1f,	//V36 A Cara delatera
-		0.5f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	-0.1f,	// B
-		0.0f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.5f,	-0.95f,	// C
+			-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, // Cara Baja
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-0.1f,	// D Cara trasera
-		0.5f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	-0.1f,	// E
-		0.0f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.5f,	-0.95f,	// F
+			-0.5f, -0.5f, 0.5f, 0.89f, 0.45f, 0.0f, 1.0f, 0.0f,	 // A Cara izquierda
+			0.0f, 0.5f, 0.5f, 0.89f, 0.45f, 0.0f, 1.0f, -1.0f,	 // C
+			-0.5f, -0.5f, -0.5f, 0.89f, 0.45f, 0.0f, 0.0f, 0.0f, // D
+			0.0f, 0.5f, 0.5f, 0.89f, 0.45f, 0.0f, 1.0f, -1.0f,	 // C
+			-0.5f, -0.5f, -0.5f, 0.89f, 0.45f, 0.0f, 0.0f, 0.0f, // D
+			0.0f, 0.5f, -0.5f, 0.89f, 0.45f, 0.0f, 0.0f, -1.0f,	 // F
 
-		-0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// Cara Baja
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		0.5f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		-0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
-		0.5f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,
+			0.5f, -0.5f, 0.5f, -0.89f, 0.45f, 0.0f, 1.0f, 0.0f,	 // B Cara derecha
+			0.0f, 0.5f, 0.5f, -0.89f, 0.45f, 0.0f, 1.0f, -1.0f,	 // C
+			0.5f, -0.5f, -0.5f, -0.89f, 0.45f, 0.0f, 0.0f, 0.0f, // E
+			0.0f, 0.5f, 0.5f, -0.89f, 0.45f, 0.0f, 1.0f, -1.0f,	 // C
+			0.5f, -0.5f, -0.5f, -0.89f, 0.45f, 0.0f, 0.0f, 0.0f, // E
+			0.0f, 0.5f, -0.5f, -0.89f, 0.45f, 0.0f, 0.0f, -1.0f, // F 24
 
-		-0.5f,	-0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// A Cara izquierda
-		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	-1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D
-		0.0f,	0.5f,	0.5f,	0.89f,	0.45f,	0.0f, 	1.0f,	-1.0f,	// C
-		-0.5f,	-0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// D 
-		0.0f,	0.5f,	-0.5f,	0.89f,	0.45f,	0.0f, 	0.0f,	-1.0f,	// F
+			//Ventana 130
+			-0.35f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // A 40 Cuadrado principal
+			0.35f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	 // B
+			-0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // C
+			0.35f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	 // B
+			-0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // C
+			0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f,	 // D
 
-		0.5f,	-0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	0.0f,	// B Cara derecha
-		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	-1.0f,	// C
-		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E
-		0.0f,	0.5f,	0.5f,	-0.89f,	0.45f,	0.0f, 	1.0f,	-1.0f,	// C
-		0.5f,	-0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	0.0f,	// E 
-		0.0f,	0.5f,	-0.5f,	-0.89f,	0.45f,	0.0f, 	0.0f,	-1.0f,	// F 24
+			-0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,	 // C Pentágono
+			0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, .0f, 0.0f,		 // D
+			-0.25f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // E
+			0.35f, 0.2f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	 // D
+			-0.25f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, // E
+			0.25f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f,	 // F
 
+			-0.35f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, //  Atrás
+			0.35f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	 //
+			-0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, //
+			0.35f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	 //
+			-0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, //
+			0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f,	 //
 
+			-0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,	 //
+			0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	 //
+			-0.25f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, //
+			0.35f, 0.2f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,	 //
+			-0.25f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, //
+			0.25f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, -1.0f,	 //
 
-		//Ventana
-		-0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// A 40 Cuadrado principal
-		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// C
-		0.35f,	-0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// B
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// C
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	-1.0f,	// D
+			-0.25f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,		// E Arriba
+			0.25f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// F
+			-0.25f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, // G
+			0.25f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// F
+			-0.25f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, // G
+			0.25f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f,	// H
 
-		-0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	0.0f,	// C Pentágono
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	.0f,	0.0f,	// D
-		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// E
-		0.35f,	0.2f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	0.0f,	// D
-		-0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	0.0f,	-1.0f,	// E
-		0.25f,	0.5f,	0.5f,	0.0f,	0.0f,	1.0f, 	1.0f,	-1.0f,	// F
+			0.25f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,	 // F  Lado derecho
+			0.25f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	 // H
+			0.35f, 0.2f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	 // D
+			0.25f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	 // H
+			0.35f, 0.2f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	 // D
+			0.35f, 0.2f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, // I
 
+			0.35f, 0.2f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,		// D
+			0.35f, 0.2f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,		// I
+			0.35f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	// B
+			0.35f, 0.2f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,		// I
+			0.35f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	// B
+			0.35f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, // J
 
-		-0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  Atrás
-		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// 
-		0.35f,	-0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// 
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	-1.0f,	// 
+			-0.25f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,	 // E  Lado izquierdo
+			-0.25f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	 // G
+			-0.35f, 0.2f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	 // C
+			-0.25f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,	 // G
+			-0.35f, 0.2f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	 // C
+			-0.35f, 0.2f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, // K
 
-		-0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	0.0f,	//  
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// 
-		0.35f,	0.2f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	0.0f,	// 
-		-0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	0.0f,	-1.0f,	// 
-		0.25f,	0.5f,	-0.5f,	0.0f,	0.0f,	-1.0f, 	1.0f,	-1.0f,	// 
+			-0.35f, 0.2f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,		// C Lado Izquierdo
+			-0.35f, 0.2f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,		// K
+			-0.35f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	// A
+			-0.35f, 0.2f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,		// K
+			-0.35f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f,	// A
+			-0.35f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, -1.0f, // L
 
+			-0.35f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,		// A Abajo
+			0.35f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,		// B
+			0.35f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,	// J
+			0.35f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,		// B
+			0.35f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,	// J
+			-0.35f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, -1.0f, // L  48
 
-		-0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	0.0f,	// E Arriba
-		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	-1.0f,	// G
-		0.25f,	0.5f,	0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	0.0f,	// F
-		-0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	0.0f,	-1.0f,	// G
-		0.25f,	0.5f,	-0.5f,	0.0f,	1.0f,	0.0f, 	1.0f,	-1.0f,	// H
-
-		0.25f,	0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// F  Lado derecho
-		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// D
-		0.25f,	0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// H
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// D
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// I
-
-		0.35f,	0.2f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// D
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// B
-		0.35f,	0.2f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// I
-		0.35f,	-0.5f,	0.5f,	1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// J
-
-		-0.25f,	0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// E  Lado izquierdo
-		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// C
-		-0.25f,	0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// G
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// C
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// K
-
-		-0.35f,	0.2f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	0.0f,	// C Lado Izquierdo
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// A
-		-0.35f,	0.2f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	0.0f,	// K
-		-0.35f,	-0.5f,	0.5f,	-1.0f,	0.0f,	0.0f, 	0.0f,	-1.0f,	// A
-		-0.35f,	-0.5f,	-0.5f,	-1.0f,	0.0f,	0.0f, 	1.0f,	-1.0f,	// L
-
-		-0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	0.0f,	// A Abajo
-		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	-1.0f,	// J
-		0.35f,	-0.5f,	0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	0.0f,	// B
-		0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	0.0f,	-1.0f,	// J
-		-0.35f,	-0.5f,	-0.5f,	0.0f,	-1.0f,	0.0f, 	1.0f,	-1.0f,	// L  48
-
+			-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //V36 A Cara delatera
+			0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,	// B
+			0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f, 1.0f,		// C
 
 	};
 	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+			0, 1, 3, // first triangle
+			1, 2, 3	 // second triangle
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -584,63 +575,61 @@ void myData()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	// normal attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	// texture coord attribute
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
-
 }
 
 void myData2()
 {
 	GLfloat skyboxVertices[] = {
-		// Positions
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
+			// Positions
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			-1.0f, 1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
 
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, 1.0f,
+			-1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f,
+			-1.0f, -1.0f, 1.0f,
 
-		-1.0f,  1.0f, -1.0f,
-		1.0f,  1.0f, -1.0f,
-		1.0f,  1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
+			-1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, -1.0f,
+			1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, -1.0f,
 
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		1.0f, -1.0f,  1.0f
-	};
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f};
 
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
@@ -653,9 +642,7 @@ void myData2()
 	// SkyBox
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *)0);
-
 }
-
 
 void animate(void)
 {
@@ -665,7 +652,7 @@ void animate(void)
 		if (i_curr_steps >= i_max_steps) //end of animation between frames?
 		{
 			playIndex++;
-			if (playIndex > FrameIndex - 2)	//end of total animation?
+			if (playIndex > FrameIndex - 2) //end of total animation?
 			{
 				printf("termina anim\n");
 				playIndex = 0;
@@ -674,7 +661,7 @@ void animate(void)
 			else //Next frame interpolations
 			{
 				i_curr_steps = 0; //Reset counter
-								  //Interpolation
+													//Interpolation
 				interpolation();
 			}
 		}
@@ -721,7 +708,6 @@ void animate(void)
 		}
 	}
 
-
 	//Animación Frisbee
 	if (animacionFrisbee)
 	{ //Función y=-0.05z^2 +4
@@ -747,8 +733,7 @@ void animate(void)
 		}
 	}
 
-
-	//Animación taza
+	//Animación Taza
 	if (animacionTaza)
 	{
 		switch (casosTaza)
@@ -760,7 +745,7 @@ void animate(void)
 				casosTaza = 1;
 			break;
 		case 1:
-			movTaza_x = 44.2f;
+			movTaza_x = 42.44f;
 			movTaza_y = 1.0f;
 			movTaza_z = 5.2f;
 			casosTaza = 2;
@@ -794,7 +779,7 @@ void animate(void)
 		}
 	}
 
-	//Animación balón
+	//Animación Balón
 	float aux;
 	if (animacionBalon)
 	{
@@ -839,7 +824,7 @@ void animate(void)
 			}
 
 		case 2:
-			movBalon_y = 0.016;
+			movBalon_y = movBalon_y;
 			break;
 		default:
 			break;
@@ -848,77 +833,82 @@ void animate(void)
 }
 
 void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint skybox, Model edificio5,
-	Model edificio6, Model edificio7, Model tree1, Model tree2,
-	Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
-	Model farola,Model focoFarola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
-	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
-	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
-	Model carro, Model llantas, Model taza)
+						 Model edificio6, Model edificio7, Model tree1, Model tree2,
+						 Model tree3, Model edificio1, Model edificio2, Model edificio3, Model edificio4,
+						 Model farola, Model focoFarola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
+						 Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
+						 Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
+						 Model carro, Model llantas, Model taza)
 {
 	shader.use();
 
 	//Setup Advanced Lights
 	shader.setVec3("viewPos", camera.Position);
 	shader.setVec3("dirLight.direction", lightDirection);
-	if (sol){
+	if (sol)
+	{
 		shader.setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
 		shader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 		shader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 	}
-	else{
+	else
+	{
 		shader.setVec3("dirLight.ambient", glm::vec3(0.15f, 0.15f, 0.15f));
 		shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
 		shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
 	}
 
 	//Inicializa a todas las luces puntuales
-	for (int i = 0; i<24; i++){
-		string c = to_string(i);//El número i expresado en cadena
+	for (int i = 0; i < 24; i++)
+	{
+		string c = to_string(i); //El número i expresado en cadena
 		shader.setVec3("pointLight[" + c + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-		if (luces){
-			shader.setVec3("pointLight["+c+"].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+		if (luces)
+		{
+			shader.setVec3("pointLight[" + c + "].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 
-			shader.setVec3("pointLight["+c+"].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+			shader.setVec3("pointLight[" + c + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
 		}
-		else{
-			shader.setVec3("pointLight["+c+"].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
-			shader.setVec3("pointLight["+c+"].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+		else
+		{
+			shader.setVec3("pointLight[" + c + "].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+			shader.setVec3("pointLight[" + c + "].specular", glm::vec3(0.0f, 0.0f, 0.0f));
 		}
-		shader.setFloat("pointLight["+c+"].constant", 1.0f);
-		shader.setFloat("pointLight["+c+"].linear", 0.09f);
-		shader.setFloat("pointLight["+c+"].quadratic", 0.032f);
+		shader.setFloat("pointLight[" + c + "].constant", 1.0f);
+		shader.setFloat("pointLight[" + c + "].linear", 0.09f);
+		shader.setFloat("pointLight[" + c + "].quadratic", 0.032f);
 	}
-	
 
 	shader.setFloat("material_shininess", 32.0f);
 
 	// create transformations and Projection
 	glm::mat4 tmp = glm::mat4(1.0f);
 	glm::mat4 origin, temp = glm::mat4(1.0f); //Pivotes casa de rick
-	glm::mat4 model = glm::mat4(1.0f);		// initialize Matrix, Use this matrix for individual models
-	glm::mat4 view = glm::mat4(1.0f);		//Use this matrix for ALL models
-	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
+	glm::mat4 model = glm::mat4(1.0f);				// initialize Matrix, Use this matrix for individual models
+	glm::mat4 view = glm::mat4(1.0f);					//Use this matrix for ALL models
+	glm::mat4 projection = glm::mat4(1.0f);		//This matrix is for Projection
 	glm::mat4 sectorA, sectorB, sectorC, sectorD = glm::mat4(1.0f);
 	glm::mat4 cenEdif1 = glm::mat4(1.0f);
 	glm::mat4 cenEdif2 = glm::mat4(1.0f);
 	glm::mat4 cenEdif3 = glm::mat4(1.0f);
 	glm::mat4 cenEdif4 = glm::mat4(1.0f);
 	glm::mat4 cenCasa = glm::mat4(1.0f);
-	glm::mat4 cenPortal, temporal = glm::mat4(1.0f);
-	glm::mat4 base = glm::mat4(1.0f);	//This matrix is for Projection
+	glm::mat4 temporal = glm::mat4(1.0f);
+	glm::mat4 base = glm::mat4(1.0f); //This matrix is for Projection
+	glm::mat4 cenPortal = glm::mat4(1.0f);
 
-										//Use "projection" to include Camera
+	//Use "projection" to include Camera
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 300.0f);
 	view = camera.GetViewMatrix();
 
 	//Scenario Rotation
 	view = glm::rotate(view,
-		glm::radians(rotY),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+										 glm::radians(rotY),
+										 glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// pass them to the shaders
 	shader.setMat4("model", model);
-	
+
 	shader.setMat4("view", view);
 	// note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
 	shader.setMat4("projection", projection);
@@ -940,7 +930,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindVertexArray(0);
 
 	//Piso de fondo
-	model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.01f,0.0f));
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.01f, 0.0f));
 	model = glm::scale(model, glm::vec3(300.0f, 1.0f, 300.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -979,10 +969,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	llantas.Draw(shader); //Izq trase
 
-
-
-
-
 	//Sector A
 	sectorA = model = glm::translate(glm::mat4(1.0f), glm::vec3(-25.0f, 0.01f, -4.0f));
 	model = glm::scale(model, glm::vec3(30.0f, 1.0f, 52.0f));
@@ -993,50 +979,48 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
-
-
 	//Edificio 1
 	cenEdif1 = model = glm::translate(sectorA, glm::vec3(-16.0f, 1.0f, 34.0f));
 	model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio1.Draw(shader);	//
+	edificio1.Draw(shader); //
 
-
-							//Edificio 2
+	//Edificio 2
 	cenEdif2 = model = glm::translate(sectorA, glm::vec3(-6.0f, -0.1f, 20.0f));
 	model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio2.Draw(shader);	//
+	edificio2.Draw(shader); //
 
-							//Edificio 3
+	//Edificio 3
 	cenEdif3 = model = glm::translate(sectorA, glm::vec3(-8.0f, 0.95f, 3.0f));
 	model = glm::scale(model, glm::vec3(1.6f, 1.6f, 1.6f));
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio3.Draw(shader);	//
+	edificio3.Draw(shader); //
 
-							//Edificio 4
+	//Edificio 4
 	cenEdif4 = model = glm::translate(sectorA, glm::vec3(39.0f, 30.5f, 35.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
-	edificio4.Draw(shader);	//
+	edificio4.Draw(shader); //
 
 	//Farolas Este sector A
 	model = glm::translate(sectorA, glm::vec3(14.0f, 0.00f, -15.6f));
-	temporal = model;//temporal contiene a la ubicación de la primer farola
-	for(int i = 0; i < 4; i++){
+	temporal = model; //temporal contiene a la ubicación de la primer farola
+	for (int i = 0; i < 4; i++)
+	{
 		//Farola
-		model = glm::translate(temporal, glm::vec3(0.0f, 0.0f, (float)10.4f*i));
+		model = glm::translate(temporal, glm::vec3(0.0f, 0.0f, (float)10.4f * i));
 		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 		shader.setMat4("model", model);
 		farola.Draw(shader);
 
 		//Foco de farola
 		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-		shader.setVec3("pointLight["+to_string(i)+"].position", glm::vec3(model * glm::vec4(1.0f)));
+		shader.setVec3("pointLight[" + to_string(i) + "].position", glm::vec3(model * glm::vec4(1.0f)));
 		projectionShader.use();
 		if (luces)
 			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -1053,15 +1037,15 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	for (int i = 0; i < 2; i++)
 	{
 		//Farola
-		model = glm::translate(temporal, glm::vec3((float) 10.0f * i, 0.0f, 0.0f));
-		model = glm::rotate(model,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
+		model = glm::translate(temporal, glm::vec3((float)10.0f * i, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 		shader.setMat4("model", model);
 		farola.Draw(shader);
 
 		//Foco de farola
 		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-		shader.setVec3("pointLight[" + to_string(i+4) + "].position", glm::vec3(model * glm::vec4(1.0f)));
+		shader.setVec3("pointLight[" + to_string(i + 4) + "].position", glm::vec3(model * glm::vec4(1.0f)));
 		projectionShader.use();
 		if (luces)
 			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -1097,10 +1081,10 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindTexture(GL_TEXTURE_2D, t_techo_C);
 	glDrawArrays(GL_TRIANGLES, 112, 18); //Triangulo
 
-										 //Ático
-										 //Cuerpo
+	//Ático
+	//Cuerpo
 	model = glm::rotate(temporal, glm::radians(90.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+											glm::vec3(0.0f, 1.0f, 0.0f));
 	temporal = model = glm::translate(model, glm::vec3(0.0f, 0.0f, -0.7f));
 	model = glm::scale(model, glm::vec3(2.0f, 1.0f, 2.0f));
 	shader.setMat4("model", model);
@@ -1109,7 +1093,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindTexture(GL_TEXTURE_2D, t_pared_C);
 	glDrawArrays(GL_TRIANGLES, 82, 24); //Cubo
 
-										//Teja
+	//Teja
 	model = glm::translate(temporal, glm::vec3(0.0f, 1.0f, -0.15f));
 	model = glm::scale(model, glm::vec3(2.0f, 1.0f, 1.7f));
 	shader.setMat4("model", model);
@@ -1120,47 +1104,44 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindTexture(GL_TEXTURE_2D, t_techo_C);
 	glDrawArrays(GL_TRIANGLES, 112, 18); //Triangulo
 
-										 //Ventana
+	//Ventana
 	model = glm::rotate(cenCasa, glm::radians(90.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+											glm::vec3(0.0f, 1.0f, 0.0f));
 	temporal = model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.725f));
 	model = glm::scale(model, glm::vec3(2.5f, 2.0f, 0.45f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_ventana_C);
 	glDrawArrays(GL_TRIANGLES, 130, 60); //Cubo
 
-
-										 //Entrada
+	//Entrada
 	temporal = model = glm::translate(cenCasa, glm::vec3(1.5f, -1.6f, 3.5f));
 	model = glm::scale(model, glm::vec3(2.0f, 0.3f, 2.0f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-										//Barrote izquierdo
+	//Barrote izquierdo
 	model = glm::translate(temporal, glm::vec3(-0.9f, 1.5f, 0.9f));
 	model = glm::scale(model, glm::vec3(0.2f, 2.7f, 0.2f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-										//Barrote derecho
+	//Barrote derecho
 	model = glm::translate(temporal, glm::vec3(0.9f, 1.5f, 0.9f));
 	model = glm::scale(model, glm::vec3(0.2f, 2.7f, 0.2f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_white_C);
 	glDrawArrays(GL_TRIANGLES, 70, 36); //Cubo
 
-										//Techito de la puerta
+	//Techito de la puerta
 	model = glm::rotate(temporal, glm::radians(90.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+											glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::translate(model, glm::vec3(1.0f, 3.1f, 0.0f));
 	model = glm::scale(model, glm::vec3(4.0f, 0.5f, 2.0f));
 	shader.setMat4("model", model);
 	glBindTexture(GL_TEXTURE_2D, t_techo_C);
 	glDrawArrays(GL_TRIANGLES, 106, 24); //Triangulo
-
-
 
 	glBindVertexArray(0);
 
@@ -1181,7 +1162,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
 	glBindTexture(GL_TEXTURE_2D, t_portal_C);
-	glDrawArrays(GL_TRIANGLES, 106, 3); //Triangulo
+	glDrawArrays(GL_TRIANGLES, 190, 3); //Triangulo
 	glBindTexture(GL_TEXTURE_2D, t_piso_b);
 	glDrawArrays(GL_TRIANGLES, 109, 3); //Triangulo
 	glBindTexture(GL_TEXTURE_2D, t_color_gris);
@@ -1205,10 +1186,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
 	shader.setMat4("model", model);
 	taza.Draw(shader); //
-
-
-
-
 
 	//Sector C
 	sectorC = model = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.01f, 11.0f));
@@ -1251,12 +1228,11 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	frisbee.Draw(shader); //
 
-	/*
 	//Balon
-	model = glm::translate(glm::mat4(1.0f), glm::vec3(movBslon_x, movBalon_y, movBalon_z));
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(movBslon_x, movBalon_y + 0.15f, movBalon_z));
 	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
 	shader.setMat4("model", model);
-	balon.Draw(shader);*/
+	balon.Draw(shader);
 
 	//
 
@@ -1272,7 +1248,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glDrawArrays(GL_QUADS, 60, 4);
 	//glDrawArrays(GL_TRIANGLES, 64, 6);
 	glBindVertexArray(0);
-
 
 	//Lego Leia
 	model = tmp;
@@ -1317,7 +1292,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	cabezaLeia.Draw(shader);
 
-
 	//Faros izquierdos
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 17.0f));
@@ -1329,14 +1303,14 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[6].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
 	projectionShader.setMat4("model", model);
 	focoFarola.Draw(projectionShader);
 	shader.use();
-	
+
 	//Farola
 	model = glm::translate(sectorC, glm::vec3(-5.0f, 0.01f, 7.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
@@ -1347,7 +1321,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[7].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1364,7 +1338,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[8].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1381,7 +1355,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[9].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1400,7 +1374,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[10].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1417,7 +1391,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[11].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1434,7 +1408,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[12].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1451,14 +1425,13 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
 	shader.setVec3("pointLight[13].position", glm::vec3(model * glm::vec4(1.0f)));
 	projectionShader.use();
-	if(luces)
+	if (luces)
 		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
 	else
 		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
 	projectionShader.setMat4("model", model);
 	focoFarola.Draw(projectionShader);
 	shader.use();
-
 
 	//�rbol 1
 	model = glm::translate(sectorC, glm::vec3(4.0f, 0.01f, 16.0f));
@@ -1471,9 +1444,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
 	shader.setMat4("model", model);
 	tree2.Draw(shader);
-
-
-
 
 	//Sector B
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(19.0f, 0.01f, -23.0f));
@@ -1489,7 +1459,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 
 	//Edificio 5
 	model = glm::translate(tmp, glm::vec3(-9.5f, 0.0f, -1.0f));
-	model = glm::rotate(model,glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
 	shader.setMat4("model", model);
 	edificio5.Draw(shader);
@@ -1532,7 +1502,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
 	glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
 	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
-	glDrawArrays(GL_TRIANGLES, 6, 6); //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
 	glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
 	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
 	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
@@ -1600,7 +1570,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	//glBindTexture(GL_TEXTURE_2D, t_c1_frontal);
 	//glDrawArrays(GL_TRIANGLES, 0, 6); //Cara frontal
 	glBindTexture(GL_TEXTURE_2D, t_c1_lateral);
-	glDrawArrays(GL_TRIANGLES, 6, 6);	 //Cara Trasera
+	glDrawArrays(GL_TRIANGLES, 6, 6); //Cara Trasera
 	//glDrawArrays(GL_TRIANGLES, 12, 6); //Lateral Izquierda
 	glDrawArrays(GL_TRIANGLES, 18, 6); //Lateral Derecha
 	glBindTexture(GL_TEXTURE_2D, t_c1_inferior);
@@ -1677,7 +1647,6 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	rick.Draw(shader);
 
-
 	//Sector D
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
 	sectorD = model;
@@ -1717,17 +1686,18 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	//Faros sector D, oeste
 	model = glm::translate(sectorD, glm::vec3(-9.5f, 0.00f, -9.0f));
 	temporal = model;
-	for(int i = 0; i < 4; i++){
+	for (int i = 0; i < 4; i++)
+	{
 		//Farola
-		model = glm::translate(temporal, glm::vec3(0.0f, 0.00f, (float) 6.0f * i));
+		model = glm::translate(temporal, glm::vec3(0.0f, 0.00f, (float)6.0f * i));
 		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 		shader.setMat4("model", model);
 		farola.Draw(shader);
 
 		//Foco de farola
 		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-		shader.setVec3("pointLight["+to_string(i+14)+"].position",
-			glm::vec3(model * glm::vec4(1.0f)));
+		shader.setVec3("pointLight[" + to_string(i + 14) + "].position",
+									 glm::vec3(model * glm::vec4(1.0f)));
 		projectionShader.use();
 		if (luces)
 			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -1741,7 +1711,8 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	//Faros sector D, este
 	model = glm::translate(sectorD, glm::vec3(0.0f, 0.0f, -14.5f));
 	temporal = model;
-	for (int i = 0; i < 2; i++){
+	for (int i = 0; i < 2; i++)
+	{
 		//Farola
 		model = glm::translate(temporal, glm::vec3(0.0f, 0.0f, (float)29.0f * i));
 		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -1769,28 +1740,29 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	tree1.Draw(shader);
 
 	//�rbol 2
-	for (int i = 1; i <= 2; i++) {
-	model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
-	5.0f * (float) pow(-1.0f,(float)i)));
-	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
-	shader.setMat4("model", model);
-	tree2.Draw(shader);
+	for (int i = 1; i <= 2; i++)
+	{
+		model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
+																					5.0f * (float)pow(-1.0f, (float)i)));
+		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
+		shader.setMat4("model", model);
+		tree2.Draw(shader);
 	}
 
 	//�rbol 3
-	for (int i = 1; i <= 2; i++) {
-	model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
-	10.0f * (float)pow(-1.0f, (float)i)));
-	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
-	shader.setMat4("model", model);
-	tree3.Draw(shader);
+	for (int i = 1; i <= 2; i++)
+	{
+		model = glm::translate(tmp, glm::vec3(0.0f, 0.01f,
+																					10.0f * (float)pow(-1.0f, (float)i)));
+		model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
+		shader.setMat4("model", model);
+		tree3.Draw(shader);
 	}
 
-
 	// Draw skybox as last
-	glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content
+	glDepthFunc(GL_LEQUAL); // Change depth function so depth test passes when values are equal to depth buffer's content
 	skyboxShader.use();
-	view = glm::mat4(glm::mat3(view));	// Remove any translation component of the view matrix
+	view = glm::mat4(glm::mat3(view)); // Remove any translation component of the view matrix
 
 	skyboxShader.setMat4("view", view);
 	skyboxShader.setMat4("projection", projection);
@@ -1817,12 +1789,12 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
 #endif
 
-														 // glfw window creation
-														 // --------------------
+	// glfw window creation
+	// --------------------
 	monitors = glfwGetPrimaryMonitor();
 	getResolution();
 
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proyecto Final. Residencial", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proyecto Final. Residencial", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -1840,7 +1812,6 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	glewInit();
-
 
 	//Mis funciones
 	//Datos a utilizar
@@ -1890,7 +1861,7 @@ int main()
 	Model carro = ((char *)"Models/Lambo/carroseria.obj");
 	Model llantasModel = ((char *)"Models/Lambo/Wheel.obj");
 
-	//Inicialización de KeyFrames
+	//Inicializaci�n de KeyFrames
 	//Keyframe 0
 	KeyFrame[0].posX = 0;
 	KeyFrame[0].posY = 0;
@@ -1941,7 +1912,7 @@ int main()
 	KeyFrame[5].rotCabeza = 40;
 
 	// Load textures
-	vector<const GLchar*> faces;
+	vector<const GLchar *> faces;
 	faces.push_back("SkyBox/west.jpg");
 	faces.push_back("SkyBox/east.jpg");
 	faces.push_back("SkyBox/up.jpg");
@@ -1951,7 +1922,7 @@ int main()
 
 	GLuint cubemapTexture = TextureLoading::LoadCubemap(faces);
 
-	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
+	glm::mat4 projection = glm::mat4(1.0f); //This matrix is for Projection
 	projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	// render loop
 	// While the windows is not closed
@@ -1974,11 +1945,11 @@ int main()
 
 		//display(modelShader, ourModel, llantasModel);
 		display(modelShader, SkyBoxshader, projectionShader, cubemapTexture,
-			edificio5, edificio6, edificio7,
-			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
-			edificio4Model, farolaModel, focoFarola,fuente, balon, rick, frisbee, perro,
-			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
-			piernaIzqLeia, carro, llantasModel, tazaModel);
+						edificio5, edificio6, edificio7,
+						tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
+						edificio4Model, farolaModel, focoFarola, fuente, balon, rick, frisbee, perro,
+						cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
+						piernaIzqLeia, carro, llantasModel, tazaModel);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -2055,8 +2026,19 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		rotCabeza -= 20;
 
 	//Animación Balón
-	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
 		animacionBalon ^= true;
+		regresoBalon = false;
+		alturaFija = 8.5f;
+		movBslon_x = -11.0f;
+		movBalon_z = 0.0f;
+		movBalon_y = 8.5f;
+		contadorTiempo = 0.0f;
+		altura = alturaFija;
+		velocidad = 1.0f;
+		estadosBalon = 0;
+	}
+		
 
 	//Animación Taza
 	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
@@ -2079,13 +2061,13 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		animacionFrisbee ^= true;
 
-	//To play KeyFrame animation 
+	//To play KeyFrame animation
 	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 	{
 		if (play == false && (FrameIndex > 1))
 		{
 			resetElements();
-			//First Interpolation				
+			//First Interpolation
 			interpolation();
 
 			play = true;
@@ -2110,7 +2092,7 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
-void resize(GLFWwindow* window, int width, int height)
+void resize(GLFWwindow *window, int width, int height)
 {
 	// Set the Viewport to the size of the created window
 	glViewport(0, 0, width, height);
@@ -2118,7 +2100,7 @@ void resize(GLFWwindow* window, int width, int height)
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
@@ -2138,7 +2120,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
 	camera.ProcessMouseScroll(yoffset);
 }

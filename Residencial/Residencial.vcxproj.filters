@@ -94,7 +94,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main_residencial2.cpp">
+    <ClCompile Include="main_residencial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
