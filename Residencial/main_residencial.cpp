@@ -876,111 +876,53 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	edificio4.Draw(shader);	//
 
+	//Farolas Este sector A
+	model = glm::translate(sectorA, glm::vec3(14.0f, 0.00f, -15.6f));
+	temporal = model;//temporal contiene a la ubicación de la primer farola
+	for(int i = 0; i < 4; i++){
+		//Farola
+		model = glm::translate(temporal, glm::vec3(0.0f, 0.0f, (float)10.4f*i));
+		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setMat4("model", model);
+		farola.Draw(shader);
 
-							//Farola
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, 11.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
+		//Foco de farola
+		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+		shader.setVec3("pointLight["+to_string(i)+"].position", glm::vec3(model * glm::vec4(1.0f)));
+		projectionShader.use();
+		if (luces)
+			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		else
+			projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		projectionShader.setMat4("model", model);
+		focoFarola.Draw(projectionShader);
+		shader.use();
+	}
 
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[0].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
+	//Farolas Sur sector A
+	model = glm::translate(sectorA, glm::vec3(-5.0f, 0.00f, 25.0f));
+	temporal = model; //temporal contiene a la ubicación de la primer farola
+	for (int i = 0; i < 2; i++)
+	{
+		//Farola
+		model = glm::translate(temporal, glm::vec3((float) 10.0f * i, 0.0f, 0.0f));
+		model = glm::rotate(model,glm::radians(90.0f),glm::vec3(0.0f,1.0f,0.0f));
+		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setMat4("model", model);
+		farola.Draw(shader);
 
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, 3.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[1].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -5.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[2].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -13.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[3].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -21.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[4].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(-10.0f, 0.01f, -29.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[5].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-
+		//Foco de farola
+		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+		shader.setVec3("pointLight[" + to_string(i+4) + "].position", glm::vec3(model * glm::vec4(1.0f)));
+		projectionShader.use();
+		if (luces)
+			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		else
+			projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		projectionShader.setMat4("model", model);
+		focoFarola.Draw(projectionShader);
+		shader.use();
+	}
 
 	//Casa
 	temporal = cenCasa = model = glm::translate(sectorC, glm::vec3(-30.0f, 1.76f, -27.0f));
