@@ -13,9 +13,7 @@ using namespace std;
 #include "camera.h"
 #include "Model.h"
 #include "Texture.h"
-#include "esfera.h"
 
-Esfera my_sphere(1.0f);
 
 // Other Libs
 #include "SOIL2/SOIL2.h"
@@ -48,6 +46,7 @@ lastFrame = 0.0f;
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
 glm::vec3 lightDirection(-0.2f, -1.0f, -1.0f);
 bool luces = true;//Bandera para encender las luces
+bool sol = true;
 
 void myData(void);
 void myData2(void);
@@ -65,6 +64,7 @@ rotY = 0.0f;
 
 //Texture
 unsigned int t_piso_m, t_piso_b, t_grass_m,
+t_ground,
 t_piso_parque,
 t_c1_frontal,
 t_c1_inferior,
@@ -248,6 +248,7 @@ void LoadTextures()
 	t_piso_m = generateTextures("Texturas/piso_m.jpg", 0);
 	t_piso_b = generateTextures("Texturas/concreto_m.jpg", 0);
 	t_grass_m = generateTextures("Texturas/grass_m.jpg", 0);
+	t_ground = generateTextures("Texturas/marble.png", 0);
 	//Casa Rick
 	t_c1_frontal = generateTextures("Texturas/CasaRick/c1_frontal.jpg", 0);
 	t_c1_inferior = generateTextures("Texturas/CasaRick/c1_inferior.jpg", 0);
@@ -726,12 +727,19 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	//Setup Advanced Lights
 	shader.setVec3("viewPos", camera.Position);
 	shader.setVec3("dirLight.direction", lightDirection);
-	shader.setVec3("dirLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
-	shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
+	if (sol){
+		shader.setVec3("dirLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+		shader.setVec3("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	}
+	else{
+		shader.setVec3("dirLight.ambient", glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setVec3("dirLight.diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+		shader.setVec3("dirLight.specular", glm::vec3(0.0f, 0.0f, 0.0f));
+	}
 
 	//Inicializa a todas las luces puntuales
-	for (int i = 0; i<20; i++){
+	for (int i = 0; i<24; i++){
 		string c = to_string(i);//El número i expresado en cadena
 		shader.setVec3("pointLight[" + c + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
 		if (luces){
@@ -798,7 +806,15 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
-
+	//Piso de fondo
+	model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.01f,0.0f));
+	model = glm::scale(model, glm::vec3(300.0f, 1.0f, 300.0f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t_ground);
+	glDrawArrays(GL_QUADS, 60, 4);
+	glBindVertexArray(0);
 
 	//Carro
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -1282,22 +1298,13 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	tree2.Draw(shader);
 
-	//�rbol 3
-	model = glm::translate(sectorC, glm::vec3(-4.0f, 0.01f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.0131f, 0.0131f, 0.0131f));
-	shader.setMat4("model", model);
-	//tree3.Draw(shader);
-
-
-
-
 
 
 
 	//Sector B
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(19.0f, 0.01f, -23.0f));
 	tmp = model;
-	origin = model;
+	sectorB = model;
 	model = glm::scale(model, glm::vec3(42.0f, 1.0f, 14.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -1312,6 +1319,32 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	model = glm::scale(model, glm::vec3(0.01217f, 0.01217f, 0.01217f));
 	shader.setMat4("model", model);
 	edificio5.Draw(shader);
+
+	//Farolas Sector B
+	model = glm::translate(sectorB, glm::vec3(-20.5f, 0.00f, 6.5f));
+	temporal = model;
+	for (int i = 0; i < 4; i++)
+	{
+		//Farola
+		model = glm::translate(temporal, glm::vec3((float)10.25f * i, 0.00f, 0.0f));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setMat4("model", model);
+		farola.Draw(shader);
+
+		//Foco de farola
+		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+		shader.setVec3("pointLight[" + to_string(i + 20) + "].position",
+									 glm::vec3(model * glm::vec4(1.0f)));
+		projectionShader.use();
+		if (luces)
+			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		else
+			projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		projectionShader.setMat4("model", model);
+		focoFarola.Draw(projectionShader);
+		shader.use();
+	}
 
 	//Casa de rick
 	glBindVertexArray(VAO);
@@ -1641,7 +1674,6 @@ int main()
 	myData();
 	myData2();
 	glEnable(GL_DEPTH_TEST);
-	my_sphere.init();
 
 	//Valores iniciales del coche
 	movAuto_x = centroX + r * cos(thetaRot * PI / 180);
@@ -1814,6 +1846,8 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 	//Para encender luces
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		luces ^= true;
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+		sol ^= true;
 
 	//Para manipular a Lego Leia
 	if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)

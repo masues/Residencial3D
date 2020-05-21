@@ -155,7 +155,6 @@
     <None Include="shaders\SkyBox.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="esfera.cpp" />
     <ClCompile Include="main_residencial.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

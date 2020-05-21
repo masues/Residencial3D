@@ -97,8 +97,5 @@
     <ClCompile Include="main_residencial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="esfera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
