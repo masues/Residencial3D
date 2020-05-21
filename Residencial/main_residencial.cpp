@@ -45,7 +45,7 @@ lastFrame = 0.0f;
 //Lighting
 glm::vec3 lightPosition(0.0f, 4.0f, 3.0f);
 glm::vec3 lightDirection(-0.2f, -1.0f, -1.0f);
-bool luces = true;//Bandera para encender las luces
+bool luces = false;//Bandera para encender las luces
 bool sol = true;
 
 void myData(void);
@@ -64,32 +64,38 @@ rotY = 0.0f;
 
 //Texture
 unsigned int t_piso_m, t_piso_b, t_grass_m,
-t_ground,
-t_piso_parque,
-t_c1_frontal,
-t_c1_inferior,
-t_c1_lateral,
-t_c2_lateral,
-t_c4_frontal,
-t_c4_lateral_izq,
-t_c5_lateral,
-t_c5_frontal,
-t_c6_superior,
-t_c6_lateral,
-t_c6_frontal,
-t_t1_frontal,
-t_t1_lateral,
-t_t1_trasera,
-t_t3_frontal,
-t_t3_trasera,
-t_white_C,
-t_pared_C,
-t_pared_ventana_C,
-t_techo_C,
-t_ventana_C,
-t_letrero_C,
-t_frente_C,
-t_atico_C;
+		t_ground,
+		t_piso_parque,
+		t_c1_frontal,
+		t_c1_inferior,
+		t_c1_lateral,
+		t_c2_lateral,
+		t_c4_frontal,
+		t_c4_lateral_izq,
+		t_c5_lateral,
+		t_c5_frontal,
+		t_c6_superior,
+		t_c6_lateral,
+		t_c6_frontal,
+		t_t1_frontal,
+		t_t1_lateral,
+		t_t1_trasera,
+		t_t3_frontal,
+		t_t3_trasera,
+		t_white_C,
+		t_pared_C,
+		t_pared_ventana_C,
+		t_techo_C,
+		t_ventana_C,
+		t_letrero_C,
+		t_frente_C,
+		t_atico_C,
+		t_portal_C,
+		t_ceramica,
+		t_ladrillo_gris,
+		t_color_gris,
+		t_portal_rick,
+		t_graffiti;
 
 //Animación Carro
 float movAuto_z,
@@ -108,6 +114,26 @@ bool animacionFrisbee = false;
 bool regresoFrisbee = false;
 float movFrisbee_z = 8.7f;
 float movFrisbee_y = 0.2f;
+
+//Animación taza
+bool animacionTaza = false;
+bool regresoTaza = false;
+float movTaza_z = 2.0f;
+float movTaza_x = 0.0f;
+float movTaza_y = 2.5f;
+int casosTaza = 0;
+
+//Animación balón
+bool animacionBalon = false;
+bool regresoBalon = false;
+float alturaFija = 10.0f;
+float movBslon_x = -11.0f;
+float movBalon_z = 0.0f;
+float movBalon_y = 10.0f;
+float contadorTiempo = 0.0f;
+float altura = alturaFija;
+float velocidad = 1.0f;
+int estadosBalon = 0;
 
 //Keyframes
 float	posX = 0.0f, //variables de manipulaci�n del dibujo 
@@ -276,6 +302,14 @@ void LoadTextures()
 	t_letrero_C = generateTextures("Texturas/CasaCesar/Letrero.jpg", 0);
 	t_frente_C = generateTextures("Texturas/CasaCesar/Frente.jpg", 0);
 	t_atico_C = generateTextures("Texturas/CasaCesar/Atico.jpg", 0);
+
+	//Texturas portal
+	t_portal_C = generateTextures("Texturas/portalGravity2.jpg", 0);
+	t_ceramica = generateTextures("Texturas/CeramicaBlanca.jpg", 0);
+	t_ladrillo_gris = generateTextures("Texturas/ParedLadrilloGris.jpg", 0);
+	t_color_gris = generateTextures("Texturas/ColorGris.jpg", 0);
+	t_portal_rick = generateTextures("Texturas/PortalRick.jpg", 0);
+	//t_graffiti = generateTextures("Texturas/Graffiti.jpg", 0);
 }
 
 void myData()
@@ -712,6 +746,105 @@ void animate(void)
 				regresoFrisbee = false;
 		}
 	}
+
+
+	//Animación taza
+	if (animacionTaza)
+	{
+		switch (casosTaza)
+		{
+		case 0:
+			if (movTaza_z >= 0.2)
+				movTaza_z -= 0.5;
+			else
+				casosTaza = 1;
+			break;
+		case 1:
+			movTaza_x = 44.2f;
+			movTaza_y = 1.0f;
+			movTaza_z = 5.2f;
+			casosTaza = 2;
+			break;
+		case 2:
+			if (movTaza_z <= 7.0)
+				movTaza_z += 0.5;
+			else
+				casosTaza = 3;
+			break;
+		case 3:
+			if (movTaza_z >= 5.2)
+				movTaza_z -= 0.5;
+			else
+				casosTaza = 4;
+			break;
+		case 4:
+			movTaza_x = 0.0f;
+			movTaza_y = 2.5f;
+			movTaza_z = 0.2;
+			casosTaza = 5;
+			break;
+		case 5:
+			if (movTaza_z <= 2.0)
+				movTaza_z += 0.5;
+			else
+				casosTaza = 0;
+			break;
+		default:
+			break;
+		}
+	}
+
+	//Animación balón
+	float aux;
+	if (animacionBalon)
+	{
+		switch (estadosBalon)
+		{
+		case 0: //Hacia abajo
+			if (movBalon_y > 0.0f)
+			{
+				contadorTiempo += 0.5;
+				aux = (altura - (0.5 * 9.81 * pow(contadorTiempo, 2)));
+				if (aux < 0.0)
+					movBalon_y = 0.0;
+				else
+					movBalon_y = aux;
+			}
+			else
+			{
+				velocidad = (9.81 * contadorTiempo) / 0.5; //
+				altura = altura * 0.6;
+				contadorTiempo = 0.0f;
+				if (altura < 0.2)
+					estadosBalon = 2;
+				else
+					estadosBalon = 1;
+			}
+			break;
+		case 1: //Hacia arriba
+			if (movBalon_y < altura)
+			{
+				contadorTiempo += 0.5;
+				aux = 9.81 * pow(contadorTiempo, 2);
+				if (aux > altura)
+					movBalon_y = altura;
+				else
+					movBalon_y += 0.5;
+				//movBalon_y = velocidad * contadorTiempo - (0.5*9.81*pow(contadorTiempo, 2));
+			}
+			else
+			{
+				contadorTiempo = 0.0f;
+				estadosBalon = 0;
+			}
+
+		case 2:
+			movBalon_y = 0.016;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint skybox, Model edificio5,
@@ -720,7 +853,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	Model farola,Model focoFarola, Model fuente, Model balon, Model rick, Model frisbee, Model perro,
 	Model cabezaLeia, Model cuerpoLeia, Model brazoDerLeia,
 	Model brazoIzqLeia, Model piernaDerLeia, Model piernaIzqLeia,
-	Model carro, Model llantas)
+	Model carro, Model llantas, Model taza)
 {
 	shader.use();
 
@@ -771,7 +904,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glm::mat4 cenEdif3 = glm::mat4(1.0f);
 	glm::mat4 cenEdif4 = glm::mat4(1.0f);
 	glm::mat4 cenCasa = glm::mat4(1.0f);
-	glm::mat4 temporal = glm::mat4(1.0f);
+	glm::mat4 cenPortal, temporal = glm::mat4(1.0f);
 	glm::mat4 base = glm::mat4(1.0f);	//This matrix is for Projection
 
 										//Use "projection" to include Camera
@@ -1031,7 +1164,47 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 
 	glBindVertexArray(0);
 
+	//Portal
 
+	//Base
+	cenPortal = model = glm::translate(glm::mat4(1.0f), glm::vec3(-20.0f, 0.3f, -26.0f));
+	model = glm::scale(model, glm::vec3(3.5f, 0.8f, 0.8f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, t_ceramica);
+	glDrawArrays(GL_TRIANGLES, 70, 36);
+	glBindVertexArray(0);
+
+	cenEdif2 = model = glm::translate(cenPortal, glm::vec3(0.0f, 2.5f, 0.0f));
+	model = glm::scale(model, glm::vec3(4.0f, 4.0f, 0.5f));
+	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, t_portal_C);
+	glDrawArrays(GL_TRIANGLES, 106, 3); //Triangulo
+	glBindTexture(GL_TEXTURE_2D, t_piso_b);
+	glDrawArrays(GL_TRIANGLES, 109, 3); //Triangulo
+	glBindTexture(GL_TEXTURE_2D, t_color_gris);
+	glDrawArrays(GL_TRIANGLES, 112, 18); //Triangulo
+
+	glBindVertexArray(0);
+
+	//Barda
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(23.0f, 1.4f, -21.0f));
+	model = glm::scale(model, glm::vec3(3.6f, 2.8f, 0.5f));
+	shader.setMat4("model", model);
+	glBindVertexArray(VAO);
+	glBindTexture(GL_TEXTURE_2D, t_portal_rick);
+	glDrawArrays(GL_TRIANGLES, 70, 6);
+	glBindTexture(GL_TEXTURE_2D, t_ladrillo_gris);
+	glDrawArrays(GL_TRIANGLES, 76, 30);
+	glBindVertexArray(0);
+	//Taza
+	model = glm::translate(cenPortal, glm::vec3(movTaza_x, movTaza_y, movTaza_z));
+	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+	model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0));
+	shader.setMat4("model", model);
+	taza.Draw(shader); //
 
 
 
@@ -1078,11 +1251,12 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	shader.setMat4("model", model);
 	frisbee.Draw(shader); //
 
+	/*
 	//Balon
-	model = glm::translate(tmp, glm::vec3(2.0f, 0.2f, 1.0f));
+	model = glm::translate(glm::mat4(1.0f), glm::vec3(movBslon_x, movBalon_y, movBalon_z));
 	model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03));
 	shader.setMat4("model", model);
-	balon.Draw(shader);
+	balon.Draw(shader);*/
 
 	//
 
@@ -1702,6 +1876,7 @@ int main()
 	Model rick = ((char *)"Models/Rick/rick.obj");
 	Model frisbee = ((char *)"Models/Frisbee/frisbee.obj");
 	Model perro = ((char *)"Models/Perro/perro.obj");
+	Model tazaModel = ((char *)"Models/Taza/Taza.obj");
 
 	//Lego Leia
 	Model cabezaLeia = ((char *)"Models/LegoLeia/cabezaLeia.obj");
@@ -1715,7 +1890,7 @@ int main()
 	Model carro = ((char *)"Models/Lambo/carroseria.obj");
 	Model llantasModel = ((char *)"Models/Lambo/Wheel.obj");
 
-	//Inicializaci�n de KeyFrames
+	//Inicialización de KeyFrames
 	//Keyframe 0
 	KeyFrame[0].posX = 0;
 	KeyFrame[0].posY = 0;
@@ -1803,7 +1978,7 @@ int main()
 			tree1, tree2, tree3, edificio1Model, edificio2Model, edificio3Model,
 			edificio4Model, farolaModel, focoFarola,fuente, balon, rick, frisbee, perro,
 			cabezaLeia, cuerpoLeia, brazoDerLeia, brazoIzqLeia, piernaDerLeia,
-			piernaIzqLeia, carro, llantasModel);
+			piernaIzqLeia, carro, llantasModel, tazaModel);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
@@ -1878,6 +2053,14 @@ void my_input(GLFWwindow *window, int key, int scancode, int action, int mode)
 		rotCabeza += 20;
 	if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
 		rotCabeza -= 20;
+
+	//Animación Balón
+	if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
+		animacionBalon ^= true;
+
+	//Animación Taza
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+		animacionTaza ^= true;
 
 	//Animación auto
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
