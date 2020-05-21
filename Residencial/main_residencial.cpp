@@ -757,13 +757,12 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glm::mat4 model = glm::mat4(1.0f);		// initialize Matrix, Use this matrix for individual models
 	glm::mat4 view = glm::mat4(1.0f);		//Use this matrix for ALL models
 	glm::mat4 projection = glm::mat4(1.0f);	//This matrix is for Projection
-	glm::mat4 sectorA = glm::mat4(1.0f);
+	glm::mat4 sectorA, sectorB, sectorC, sectorD = glm::mat4(1.0f);
 	glm::mat4 cenEdif1 = glm::mat4(1.0f);
 	glm::mat4 cenEdif2 = glm::mat4(1.0f);
 	glm::mat4 cenEdif3 = glm::mat4(1.0f);
 	glm::mat4 cenEdif4 = glm::mat4(1.0f);
 	glm::mat4 cenCasa = glm::mat4(1.0f);
-	glm::mat4 sectorC = glm::mat4(1.0f);
 	glm::mat4 temporal = glm::mat4(1.0f);
 	glm::mat4 base = glm::mat4(1.0f);	//This matrix is for Projection
 
@@ -925,6 +924,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	}
 
 	//Casa
+	sectorC = glm::mat4(1.0f);
 	temporal = cenCasa = model = glm::translate(sectorC, glm::vec3(-30.0f, 1.76f, -27.0f));
 	model = glm::scale(temporal, glm::vec3(5.0f, 3.5f, 5.0f));
 	shader.setMat4("model", model);
@@ -1473,7 +1473,7 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 
 	//Sector D
 	model = glm::translate(glm::mat4(1.0f), glm::vec3(30.0f, 0.01f, 7.0f));
-	tmp = model;
+	sectorD = model;
 	model = glm::scale(model, glm::vec3(20.0f, 1.0f, 30.0f));
 	shader.setMat4("model", model);
 	glBindVertexArray(VAO);
@@ -1483,21 +1483,21 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glBindVertexArray(0);
 
 	//Edificio 6
-	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, -9.0f));
+	model = glm::translate(sectorD, glm::vec3(-4.5f, 0.01f, -9.0f));
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.001112f, 0.001112f, 0.001112f));
 	shader.setMat4("model", model);
 	edificio6.Draw(shader);
 
 	//Edificio 7
-	model = glm::translate(tmp, glm::vec3(-4.5f, 0.01f, 9.0f));
+	model = glm::translate(sectorD, glm::vec3(-4.5f, 0.01f, 9.0f));
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
 	shader.setMat4("model", model);
 	edificio7.Draw(shader);
 
 	//Pasto sector D
-	model = glm::translate(tmp, glm::vec3(7.0f, 0.01f, 0.0f));
+	model = glm::translate(sectorD, glm::vec3(7.0f, 0.01f, 0.0f));
 	tmp = model;
 	model = glm::scale(model, glm::vec3(4.0f, 1.0f, 25.0f));
 	shader.setMat4("model", model);
@@ -1507,92 +1507,54 @@ void display(Shader shader, Shader skyboxShader, Shader projectionShader, GLuint
 	glDrawArrays(GL_QUADS, 60, 4);
 	glBindVertexArray(0);
 
-	//Farola
-	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, 11.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//Faros sector D, oeste
+	model = glm::translate(sectorD, glm::vec3(-9.5f, 0.00f, -9.0f));
+	temporal = model;
+	for(int i = 0; i < 4; i++){
+		//Farola
+		model = glm::translate(temporal, glm::vec3(0.0f, 0.00f, (float) 6.0f * i));
+		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setMat4("model", model);
+		farola.Draw(shader);
 
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[14].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
+		//Foco de farola
+		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+		shader.setVec3("pointLight["+to_string(i+14)+"].position",
+			glm::vec3(model * glm::vec4(1.0f)));
+		projectionShader.use();
+		if (luces)
+			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		else
+			projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		projectionShader.setMat4("model", model);
+		focoFarola.Draw(projectionShader);
+		shader.use();
+	}
 
-	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, 3.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
+	//Faros sector D, este
+	model = glm::translate(sectorD, glm::vec3(0.0f, 0.0f, -14.5f));
+	temporal = model;
+	for (int i = 0; i < 2; i++){
+		//Farola
+		model = glm::translate(temporal, glm::vec3(0.0f, 0.0f, (float)29.0f * i));
+		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+		shader.setMat4("model", model);
+		farola.Draw(shader);
 
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[15].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -5.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[16].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -13.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[17].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
-	model = glm::translate(sectorC, glm::vec3(15.0f, 0.01f, -29.0f));
-	model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
-	shader.setMat4("model", model);
-	farola.Draw(shader);
-
-	//Foco de farola
-	model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
-	shader.setVec3("pointLight[18].position", glm::vec3(model * glm::vec4(1.0f)));
-	projectionShader.use();
-	if(luces)
-		projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	else
-		projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
-	projectionShader.setMat4("model", model);
-	focoFarola.Draw(projectionShader);
-	shader.use();
-
+		//Foco de farola
+		model = glm::translate(model, glm::vec3(0.0f, 17.66f, 0.0f));
+		shader.setVec3("pointLight[" + to_string(i + 18) + "].position",
+									 glm::vec3(model * glm::vec4(1.0f)));
+		projectionShader.use();
+		if (luces)
+			projectionShader.setVec3("aColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		else
+			projectionShader.setVec3("aColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		projectionShader.setMat4("model", model);
+		focoFarola.Draw(projectionShader);
+		shader.use();
+	}
 
 	//�rbol 1
 	model = glm::scale(tmp, glm::vec3(0.0131f, 0.0131f, 0.0131f));
